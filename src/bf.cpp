@@ -11,23 +11,27 @@ void conquer(const std::vector<std::vector<double>>& X,
              std::vector<int>& C) {
   int n = X.size();
   int d = X[0].size();
-  bool all_less, all_greater;
+  bool conc;
   
   for (int i=0; i<n-1; i++) {
     for (int j=i+1; j<n; j++) {
-      all_less = true;
-      all_greater = true;
-      for (size_t k = 0; k < d; k++) {
-        if (X[i][k] < X[j][k]) {
-          all_greater = false;
-        } else if (X[i][k] > X[j][k]) {
-          all_less = false;
-        }
-        if (!all_less && !all_greater) {
-          break;
-        }
+      conc = true;
+      if(X[i][0] < X[j][0]){
+        for (size_t k = 1; k < d; k++){
+          if(X[i][k] > X[j][k]){
+            conc = false;
+            break;
+          }
+        }  
+      }else{
+        for (size_t k = 1; k < d; k++){
+          if(X[i][k] < X[j][k]){
+            conc = false;
+            break;
+          }
+        }  
       }
-      if (all_less || all_greater) {
+      if (conc) {
         C[i] += 1;
         C[j] += 1;
       }
@@ -38,7 +42,7 @@ void conquer(const std::vector<std::vector<double>>& X,
  
 
 // [[Rcpp::export]]
-NumericVector bruteForce(NumericMatrix X) {
+IntegerVector bruteForce(NumericMatrix X) {
   int n = X.nrow();
   int d = X.ncol();
   
@@ -57,6 +61,10 @@ NumericVector bruteForce(NumericMatrix X) {
   
   conquer(X_vec, C);
 
-  // convert C and return it
-  return Rcpp::wrap(C);
+  IntegerVector C_out(n);
+  for (int i = 0; i < n; i++) {
+    C_out(i) = C[i];
+  }
+  
+  return C_out;
 }

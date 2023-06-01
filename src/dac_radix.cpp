@@ -13,34 +13,29 @@ void conquer(const std::vector<std::vector<int>>& X,
              const std::vector<int>& ids) {
   int n = ids.size();
   int d = X[0].size();
-  bool conc;
+  bool all_less, all_greater;
   
   for (int i=0; i<n-1; i++) {
     for (int j=i+1; j<n; j++) {
-      conc = true;
-      if(X[ids[i]][0] < X[ids[j]][0]){
-        for (size_t k = 1; k < d; k++){
-          if(X[ids[i]][k] > X[ids[j]][k]){
-            conc = false;
-            break;
-          }
-        }  
-      }else{
-        for (size_t k = 1; k < d; k++){
-          if(X[ids[i]][k] < X[ids[j]][k]){
-            conc = false;
-            break;
-          }
-        }  
+      all_less = true;
+      all_greater = true;
+      for (size_t k = 0; k < d; k++) {
+        if (X[ids[i]][k] < X[ids[j]][k]) {
+          all_greater = false;
+        } else if (X[ids[i]][k] > X[ids[j]][k]) {
+          all_less = false;
+        }
+        if (!all_less && !all_greater) {
+          break;
+        }
       }
-      if (conc) {
+      if (all_less || all_greater) {
         C[ids[i]] += 1;
         C[ids[j]] += 1;
       }
     }
   }
 }
-
 
 void conquer2(const std::vector<std::vector<int>>& X,
               std::vector<int>& C,
@@ -50,18 +45,15 @@ void conquer2(const std::vector<std::vector<int>>& X,
   int n1 = ids1.size();
   int n2 = ids2.size();
   int d = ks.size();
-  bool conc;
+  bool all_less, all_greater;
   
   for (int i : ids1) {
     for (int j : ids2) {
-      conc = true;
+      all_less = true;
       for (int k = 0; k < d; k++) {
-        if (X[i][ks[k]] > X[j][ks[k]]){
-          conc = false;
-          break;
-        } 
+        if (X[i][ks[k]] > X[j][ks[k]]) all_less = false;
       }
-      if (conc) {
+      if (all_less) {
         C[i] += 1;
         C[j] += 1;
       }
@@ -69,6 +61,43 @@ void conquer2(const std::vector<std::vector<int>>& X,
   }
 }
 
+
+void radixSort(std::vector<int>& arr) {
+  int maxVal = *std::max_element(arr.begin(), arr.end());
+  int numDigits = 0;
+  
+  while (maxVal > 0) {
+    maxVal /= 10;  // Assuming base-10 numbers
+    numDigits++;
+  }
+  
+  std::vector<int> temp(arr.size());
+  std::vector<int> count(10, 0);
+  
+  int exp = 1;
+  for (int digit = 0; digit < numDigits; digit++) {
+    std::fill(count.begin(), count.end(), 0);
+    
+    // Count occurrences of each digit
+    for (int i = 0; i < arr.size(); i++)
+      count[(arr[i] / exp) % 10]++;
+    
+    // Calculate cumulative count
+    for (int i = 1; i < 10; i++)
+      count[i] += count[i - 1];
+    
+    // Build the sorted array
+    for (int i = arr.size() - 1; i >= 0; i--) {
+      temp[count[(arr[i] / exp) % 10] - 1] = arr[i];
+      count[(arr[i] / exp) % 10]--;
+    }
+    
+    // Swap the arrays for the next iteration
+    std::swap(arr, temp);
+    
+    exp *= 10;  // Assuming base-10 numbers
+  }
+}
 
 
 //* 
@@ -85,10 +114,9 @@ void merge(const std::vector<std::vector<int>>& X,
   int n1 = ids1.size();
   int n2 = ids2.size();
   
-  // Sort ids1 and ids2 by the values in X[:,k]
-  std::sort(ids1.begin(), ids1.end(), [&X, k](int i, int j){return X[i][k] < X[j][k];});
-  std::sort(ids2.begin(), ids2.end(), [&X, k](int i, int j){return X[i][k] < X[j][k];});
-  
+  radixSort(ids1);
+  radixSort(ids2);
+
   // merge operation in merge sort
   int i = 0, j = 0;
   while (i < n1 && j < n2) {
@@ -320,7 +348,7 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
 
 
 // [[Rcpp::export]]
-IntegerVector dac(IntegerMatrix X, int thresh = 100, bool brute_force = false) {
+IntegerVector dacRadix(IntegerMatrix X, int thresh = 100, bool brute_force = false) {
   int n = X.nrow();
   int d = X.ncol();
   
