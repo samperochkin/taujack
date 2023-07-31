@@ -8,7 +8,7 @@ using namespace Rcpp;
 //* Functions to "naively" compute concordance
 //* 
 
-void conquer(const std::vector<std::vector<int>>& X,
+void conquer(const std::vector<std::vector<double>>& X,
              std::vector<int>& C,
              const std::vector<int>& ids) {
   int n = ids.size();
@@ -42,7 +42,7 @@ void conquer(const std::vector<std::vector<int>>& X,
 }
 
 
-void conquer2(const std::vector<std::vector<int>>& X,
+void conquer2(const std::vector<std::vector<double>>& X,
               std::vector<int>& C,
               const std::vector<int>& ids1,
               const std::vector<int>& ids2,
@@ -76,7 +76,7 @@ void conquer2(const std::vector<std::vector<int>>& X,
 //* for cases when there remains one dimension to look at.
 //* 
 
-void merge(const std::vector<std::vector<int>>& X,
+void merge(const std::vector<std::vector<double>>& X,
            std::vector<int>& C,
            std::vector<int>& ids1,
            std::vector<int>& ids2,
@@ -113,7 +113,7 @@ void merge(const std::vector<std::vector<int>>& X,
 //* Divide and conquer function for pairs of index sets.
 //* 
 
-void divideAndConquerLower(const std::vector<std::vector<int>>& X,
+void divideAndConquerLower(const std::vector<std::vector<double>>& X,
                            std::vector<int>& C,
                            const int thresh,
                            std::vector<int>& ids1,
@@ -134,11 +134,11 @@ void divideAndConquerLower(const std::vector<std::vector<int>>& X,
   
   // Otherwise, split Ids into 2^d sets relative to the midpoint
   std::vector<double> mid(d);
-  int mi;
-  int ma;
+  double mi;
+  double ma;
   for (int k = 0; k < d; k++) {
-    mi = X.size();
-    ma = 1;
+    mi = std::numeric_limits<double>::infinity() ;
+    ma = std::numeric_limits<double>::infinity()*(-1);
     for (int i : ids1) {
       mi = std::min(mi, X[i][ks[k]]);
       ma = std::max(ma, X[i][ks[k]]);
@@ -221,7 +221,7 @@ void divideAndConquerLower(const std::vector<std::vector<int>>& X,
 }
 
 
-void divideAndConquer(const std::vector<std::vector<int>>& X,
+void divideAndConquer(const std::vector<std::vector<double>>& X,
                       std::vector<int>& C,
                       const int thresh,
                       const std::vector<int> ids) {
@@ -236,11 +236,11 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
   
   // Split Ids into (at most) 2^d sets relative to the midpoint
   std::vector<double> mid(d);
-  int mi;
-  int ma;
+  double mi;
+  double ma;
   for (int k = 0; k < d; k++) {
-    mi = X.size();
-    ma = 1;
+    mi = std::numeric_limits<double>::infinity() ;
+    ma = std::numeric_limits<double>::infinity()*(-1);
     for (int i : ids) {
       mi = std::min(mi, X[i][k]);
       ma = std::max(ma, X[i][k]);
@@ -320,7 +320,7 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
 
 
 // [[Rcpp::export]]
-IntegerVector dac(IntegerMatrix X, int thresh = 100, bool brute_force = false) {
+IntegerVector dac(NumericMatrix X, int thresh = 100, bool brute_force = false) {
   int n = X.nrow();
   int d = X.ncol();
   
@@ -328,7 +328,7 @@ IntegerVector dac(IntegerMatrix X, int thresh = 100, bool brute_force = false) {
   std::vector<int> C(n, 0);
   
   // initialize X_vec
-  std::vector<std::vector<int>> X_vec(n, std::vector<int>(d));
+  std::vector<std::vector<double>> X_vec(n, std::vector<double>(d));
   
   // fill X_vec
   for (int i = 0; i < n; i++) {
@@ -336,7 +336,7 @@ IntegerVector dac(IntegerMatrix X, int thresh = 100, bool brute_force = false) {
       X_vec[i][j] = X(i, j);
     }
   }  
-  
+
   std::vector<int> ids(n);
   std::iota(ids.begin(), ids.end(), 0);  // initialize ids to 0, 1, ..., n-1
   
