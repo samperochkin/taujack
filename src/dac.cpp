@@ -210,11 +210,8 @@ void divideAndConquerLower(const std::vector<std::vector<double>>& X,
       }
       else{ // lower-dimensional problem
         std::vector<int> new_ks;
-        for (int i = 0; i < d; i++) {
-          if (pos1i[i] == pos2j[i]) new_ks.push_back(ks[i]);
-        }
+        for (int i = 0; i < d; i++) if (pos1i[i] == pos2j[i]) new_ks.push_back(ks[i]);
         divideAndConquerLower(X, C, thresh, ids1i, ids2j, new_ks);
-        
       }
     } 
   } 
