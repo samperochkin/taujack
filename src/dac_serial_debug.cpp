@@ -171,9 +171,6 @@ void divideAndConquer2(const std::vector<std::vector<int>>& X,
   int d = X[0].size();
   if(k0 == d) return; // end of recursion - concordant sets
   
-  // k0 = d means that the given pairs are concordant
-  if(k0 == d) return;
-  
   double sqrt_nn = std::sqrt(n0)*std::sqrt(n1);
   if(sqrt_nn <= thresh || n0 < 3 || n1 < 3) {
     conquer2(X, D, ids, l0, r0, l1, r1, k0);
@@ -195,7 +192,7 @@ void divideAndConquer2(const std::vector<std::vector<int>>& X,
     merge(X, D, ids, l0, r0, l1, r1, k0);
     return;
   }
-
+  
   // find split value
   std::pair<int, int> splitIndices = findSplit(X, ids, l0, r0, l1, r1, k0);
   int split0 = splitIndices.first;

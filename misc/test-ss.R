@@ -1,56 +1,71 @@
 library(Rcpp)
 sourceCpp("src/bf.cpp")
+sourceCpp("src/dac_serial.cpp")
+# sourceCpp("src/dac_serial_debug.cpp")
 
 
-n <- 25
+d <- 30
+m <- 2
+# n <- 2^18
+n <- 300000
+X <- replicate(d, 1:n)
+dac_serial(X, 100)
+system.time(dac_serial(X, 25))[3]
+
+
+
+n <- 200
 d <- 6
 X <- replicate(d, sample(n))
-
-# sourceCpp("src/dst.cpp")
-sourceCpp("src/dac_sssserial.cpp")
-sourceCpp("src/dac_ssserial.cpp")
-sourceCpp("src/dac_sserial.cpp")
-
 d0 <- sapply(2:d, \(k) bruteForce(X[,1:k]))
-d1 <- dac_sserial(X, 3)
-d2 <- dac_ssserial(X, 3)
-d3 <- dac_sssserial(X, 3)
+d1 <- dac_serial(X, 3)
 all(d1 == d0)
-all(d2 == d0)
-all(d3 == d0)
-
-# sourceCpp("src/dac_serial_simple.cpp")
-# all(bruteForce(X)==dac_sserial(X, 3)[,d-1])
+# d2 <- dac(X, 3)
+# all(d2 == d0)
 
 
-n <- 75000
-d <- 5
-X <- replicate(d, sample(n))
-system.time(bruteForce(X))
-system.time(dac_sserial(X, 25))
-system.time(dac_ssserial(X, 25))
-system.time(pcaPP::cor.fk(X))
-
-
-sourceCpp("src/dac_serial_simple.cpp")
-
-n <- 250000
-d <- 2
-X <- replicate(d, sample(n))
-sourceCpp("src/dac_sserial.cpp")
-system.time(dac_sserial(X, 25))
-sourceCpp("src/dac_serial_simple.cpp")
-system.time(dac_sserial(X, 25))
 
 
 d <- 2
-nn <- 1.75^(10:21)
+m <- 2
+nn <- m^(10:19)
+# n <- 2^18
 res <- sapply(nn, \(n){
+  print(n)
   mean(replicate(50, {
     X <- replicate(d, sample(n))
-    sourceCpp("src/dac_sserial.cpp")
-    system.time(dac_sserial(X, 25))[3]
+    # X <- replicate(d, 1:n)
+    system.time(dac_serial(X, 25))[3]
+  }))
+})
+plot(nn, res, type="o")
+plot(log(nn,m), log(res,m), type="o")
+diff(log(res[c(5,length(res))],m))/diff(log(nn[c(5,length(res))],m))
+
+res2 <- sapply(nn, \(n){
+  print(n)
+  mean(replicate(50, {
+    X <- replicate(d, sample(n))
+    # X <- replicate(d, 1:n)
+    system.time(pcaPP::cor.fk(X))[3]
   }))
 })
 
-plot(log(nn,2), log(res,2), type="o")
+plot(nn, res-res[1], type="o")
+lines(nn, res2-res2[1], type="o", col=2)
+plot(log(nn,m), log(res-res[1]+1,m), type="o")
+lines(log(nn,m), log(res2-res2[1]+1,m), type="o", col=2)
+diff(log(res[c(5,length(res))],m))/diff(log(nn[c(5,length(res))],m))
+
+nnn <- nn/2^10
+nl1 <- nnn*log(nnn)
+nl2 <- nnn*log(nnn)^2
+plot(nl2, type="o", col=2)
+lines(nl1, type="o")
+
+plot(log(nn,m), log(res-res[1]+1,m), type="o")
+lines(log(nn,m), log(res2-res2[1]+1,m), type="o", col=2)
+lines(log(nn,m), nl1/20000, type="o", col=3)
+lines(log(nn,m), nl2/15000, type="o", col=4)
+lines(log(nn,m), nl1/2500, type="o", col=3)
+

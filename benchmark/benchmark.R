@@ -16,8 +16,8 @@ source("functions.R")       # wrappers (performs re-ordering if necessary)
 
 # Benchmark ---------------------------------------------------------------
 num_rep <- 100
-taus <- c(0, .5, 1)
-ks <- 8:18 # (n = 2^k)
+taus <- c(0, .25, .5, .75, 1)
+ks <- 10:20 # (n = 2^k)
 ps <- seq(2,10,2) # dimensions considered
 
 sim_grid <- expand.grid(rep_id = 1:num_rep, tau = taus, k = ks)
@@ -33,31 +33,34 @@ for(r in seq_along(ns)){
     
     rep_id <- sim_grid[s,]$rep_id
     n <- sim_grid[s,]$n
+    k <- sim_grid[s,]$k
     tau <- sim_grid[s,]$tau
     rho <- sim_grid[s,]$rho
   
     set.seed(34*s)
-    X <- (rnorm(n, 0, sqrt(rho)) + matrix(rnorm(n*15, 0, sqrt(1-rho)), n, 15))
+    X <- (rnorm(n, 0, sqrt(rho)) + matrix(rnorm(n*10, 0, sqrt(1-rho)), n, 10))
   
     # very fast, needs many replications to get a good estimate
     time_knight_o <- system.time(replicate(100, cor.fk(X[,1:2])))[[3]]/100
     time_knight_e <- system.time(replicate(100, taujack_ms(X[,1:2])))[[3]]/100
     
-    # fast, but not too fast (unless tau=1)
+    # still fast, but much less so (unless tau=1)
     time_dac <- numeric(length(ps))
     for(r in seq_along(ps)){
       K <- ifelse(tau == 1, 50, 5)
-      time_dac[r] <- system.time(replicate(K, taujack_dac(X[,1:ps[r]], thresh=100L)))[[3]]/K
+      time_dac[r] <- system.time(replicate(K, taujack_dac(X[,1:ps[r]], thresh=25L)))[[3]]/K
     }
   
     # not fast, unless n is small
-    time_bf <- numeric(2)
-    ps_sub <- ps[c(1,length(ps))]
-    for(r in c(1,2)){
-      K <- ifelse(n < 2^10, 10, 1)
-      time_bf[r] <- system.time(replicate(K, taujack_bf(X[,1:ps_sub[r]])))[[3]]/K
+    time_bf <- c(NA, NA)
+    if(k <= 13){
+      ps_sub <- ps[c(1,length(ps))]
+      for(r in c(1,2)){
+        K <- ifelse(n < 2^10, 10, 1)
+        time_bf[r] <- system.time(replicate(K, taujack_bf(X[,1:ps_sub[r]])))[[3]]/K
+      }
     }
-    
+
     dt <- data.table(rep_id=rep_id, n=n, tau=tau, rho=rho, p = c(2, 2, ps, ps_sub),
                      fun = c("Knight (original)", "Knight (extended)",
                              rep(c("d-a-c"), each=length(ps)),

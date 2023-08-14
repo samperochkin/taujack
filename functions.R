@@ -23,14 +23,14 @@ taujack_ms <- function(X){
 }
 
 # divide-and-conquer algorithm
-taujack_dac <- function(X, thresh = 100L, brute_force = F){
+taujack_dac <- function(X, thresh = 25L, brute_force = F){
   
   n <- nrow(X)
   if(brute_force){
     C <- bruteForce(X)
   }else{
     X <- apply(X, 2, rank)
-    C <- dac(X, thresh = thresh, brute_force = brute_force)
+    C <- dac_serial(X, thresh = thresh, brute_force = brute_force)
   }
 
   return(list(tau = sum(C)/choose(n,2) - 1,
