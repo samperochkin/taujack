@@ -9,7 +9,7 @@ library(parallel)
 # functions to benchmark
 library(pcaPP) # cor.fk
 sourceCpp("src/ms.cpp")   # for Knight's extended alg.
-sourceCpp("src/dac.cpp")  # divide-and-conquer alg.
+sourceCpp("src/dac_serial.cpp")  # divide-and-conquer alg.
 sourceCpp("src/bf.cpp")   # brute force alg.
 source("functions.R")       # wrappers (performs re-ordering if necessary)
 
@@ -17,20 +17,22 @@ source("functions.R")       # wrappers (performs re-ordering if necessary)
 # Benchmark ---------------------------------------------------------------
 num_rep <- 100
 taus <- c(0, .25, .5, .75, 1)
-ks <- 10:20 # (n = 2^k)
+ks <- 8:18 # (n = 2^k)
 ps <- seq(2,10,2) # dimensions considered
+ps_sub <- ps[c(1,length(ps))] # dimensions considered for bf alg.
 
 sim_grid <- expand.grid(rep_id = 1:num_rep, tau = taus, k = ks)
 sim_grid$n <- 2^sim_grid$k
 sim_grid$rho <- sin(sim_grid$tau*pi/2)
+cat("Number of row in sim_grid: ", nrow(sim_grid), "\n")
 
 ns <- 2^ks
 
-for(r in seq_along(ns)){
-  times <- mclapply(which(sim_grid$n == ns[r]), \(s){
-    
+for(x in seq_along(ks)){
+    times <- mclapply(which(sim_grid$k == ks[x]), \(s){
+
     cat(".\n")
-    
+
     rep_id <- sim_grid[s,]$rep_id
     n <- sim_grid[s,]$n
     k <- sim_grid[s,]$k
@@ -47,32 +49,31 @@ for(r in seq_along(ns)){
     # still fast, but much less so (unless tau=1)
     time_dac <- numeric(length(ps))
     for(r in seq_along(ps)){
-      K <- ifelse(tau == 1, 50, 5)
+      K <- ifelse(tau == 1 | k <= 12, 50, 5)
       time_dac[r] <- system.time(replicate(K, taujack_dac(X[,1:ps[r]], thresh=25L)))[[3]]/K
     }
   
     # not fast, unless n is small
-    time_bf <- c(NA, NA)
-    if(k <= 13){
-      ps_sub <- ps[c(1,length(ps))]
+    time_bf <- as.numeric(c(NA, NA))
+    if(k <= 15){
       for(r in c(1,2)){
-        K <- ifelse(n < 2^10, 10, 1)
+        if(k <= 12){
+          K <- 10
+        }else{
+          K <- 1
+        }
         time_bf[r] <- system.time(replicate(K, taujack_bf(X[,1:ps_sub[r]])))[[3]]/K
       }
     }
 
     dt <- data.table(rep_id=rep_id, n=n, tau=tau, rho=rho, p = c(2, 2, ps, ps_sub),
-                     fun = c("Knight (original)", "Knight (extended)",
-                             rep(c("d-a-c"), each=length(ps)),
-                             rep(c("brute force"), each=length(ps_sub))),
+                     fun = c("Knight (original, KO)", "Knight (extended, KE)",
+                             rep(c("divide-and-conquer (DAC)"), each=length(ps)),
+                             rep(c("brute force (BF)"), each=length(ps_sub))),
                      time = c(time_knight_o, time_knight_e, time_dac, time_bf))
     
-  
     return(dt)
   }, mc.cores = 12) |> rbindlist()
 
-
-
-
-  fwrite(times, paste0("times", r, ".csv"))
+  fwrite(times, paste0("benchmark/times", x, ".csv"))
 }

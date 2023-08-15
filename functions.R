@@ -39,7 +39,6 @@ taujack_dac <- function(X, thresh = 25L, brute_force = F){
 
 # brute force algorithm
 taujack_bf <- function(X){
-  
   n <- nrow(X)
   C <- bruteForce(X)
   return(list(tau = sum(C)/choose(n,2) - 1,
