@@ -269,10 +269,7 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
 }
 
 
-#include <Rcpp.h>
-#include <vector>
 #include <algorithm>  // For sorting
-
 using namespace Rcpp;
 
 std::vector<int> computeRanks(const std::vector<double>& values) {

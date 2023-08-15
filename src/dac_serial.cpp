@@ -1,6 +1,7 @@
 #include <Rcpp.h>
 #include <vector>
-#include <unistd.h>
+// #include <unistd.h>
+#include <algorithm>  // For sorting
 
 using namespace Rcpp;
 
@@ -52,6 +53,38 @@ void conquer2(const std::vector<std::vector<int>>& X,
 }
 
 void merge(const std::vector<std::vector<int>>& X,
+           std::vector<std::vector<int>>& D,
+           std::vector<int>& ids,
+           const int l, const int mid, const int r,
+           const int k0) {
+  
+  int n0 = mid-l;
+  int n1 = r-mid;
+  int count0 = 0;
+  int count1 = 0;
+  std::vector<int> temp_ids(n0+n1);
+  
+  while (count0 < n0 && count1 < n1) {
+    if (X[ids[l+count0]][k0] < X[ids[mid+count1]][k0]) {
+      D[ids[l+count0]][k0-1] += count1;
+      temp_ids[count0+count1] = ids[l+count0];
+      count0++;
+    } else {
+      D[ids[mid+count1]][k0-1] += n0-count0;
+      temp_ids[count0+count1] = ids[mid+count1];
+      count1++;
+    }
+  }
+  for(int i=count0; i<n0; i++){
+    D[ids[l+i]][k0-1] += n1; 
+    temp_ids[n1+i] = ids[l+i];
+  }
+  for(int i=count1; i<n1; i++) temp_ids[n0+i] = ids[mid+i];
+  for(int i=0; i<n0+n1; i++) ids[l+i] = temp_ids[i];
+}
+
+
+void merge2(const std::vector<std::vector<int>>& X,
            std::vector<std::vector<int>>& D,
            const std::vector<int>& ids,
            const int l0, const int r0,
@@ -192,7 +225,7 @@ void divideAndConquer2(const std::vector<std::vector<int>>& X,
   
   // if appropriate perform merge phase of merge sort
   if(k0+1 == d){
-    merge(X, D, ids, l0, r0, l1, r1, k0);
+    merge2(X, D, ids, l0, r0, l1, r1, k0);
     return;
   }
 
@@ -204,9 +237,6 @@ void divideAndConquer2(const std::vector<std::vector<int>>& X,
   // rec necessarily discordant
   for(int i = l0 + split0; i < r0; i++) D[ids[i]][k0-1] += split1;
   for(int j = l1; j < l1 + split1; j++) D[ids[j]][k0-1] += (n0-split0);
-  
-  // sleep(1);
-  // std::cout << "ho" << std::endl;
   
   // need further investigation on k0+1 (re-divide)
   divideAndConquer2(X, D, thresh, ids, l0, l0+split0, l1, l1+split1, k0, false);
@@ -230,12 +260,10 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
   
   if(n <= thresh) {
     conquer(X, D, ids, l, r, k0);
-    if(k0 < d){
-      // end of recursion, order indices for later merging
-      std::sort(ids.begin() + l, ids.begin() + r, [&](int i, int j) {
-        return X[i][k0] < X[j][k0];
-      });
-    }
+    // end of recursion, order indices for later merging
+    std::sort(ids.begin() + l, ids.begin() + r, [&](int i, int j) {
+      return X[i][k0] < X[j][k0];
+    });
     return;
   }
   
@@ -246,10 +274,10 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
   
   // merge/conquer ----------------------------------------
   if(k0+1 == d){
-    merge(X, D, ids, l, mid, mid, r, k0);
+    merge(X, D, ids, l, mid, r, k0);
     return;
   }
-  
+
   std::vector<int> ids_sorted(ids.begin()+l, ids.begin()+r);
   std::pair<int, int> splitIndices = findSplitSort(X, ids, ids_sorted, l, mid, mid, r, k0);
   int split0 = splitIndices.first;
@@ -271,12 +299,6 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
   for(int i=0; i<r-l; i++) ids[l+i] = ids_sorted[i];
 }
 
-
-#include <Rcpp.h>
-#include <vector>
-#include <algorithm>  // For sorting
-
-using namespace Rcpp;
 
 std::vector<int> computeRanks(const std::vector<double>& values) {
   std::vector<int> ranks(values.size());
@@ -315,7 +337,7 @@ std::vector<std::vector<int>> columnRanks(const std::vector<std::vector<double>>
 // Rcpp wrapper function
 // This function takes an R numeric matrix X, computes the discordance matrix, and returns an integer matrix.
 // [[Rcpp::export]]
-IntegerMatrix dac_serial(NumericMatrix X, int thresh = 100, bool brute_force = false) {
+IntegerMatrix dac_serial(NumericMatrix X, int thresh = 25, bool brute_force = false) {
   int n = X.nrow();
   int d = X.ncol();
   
