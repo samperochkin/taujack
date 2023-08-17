@@ -1,6 +1,6 @@
 
 ###########################################################################
-# Script dowloading data from Weather Canada ------------------------------
+# Script downloading data from Weather Canada -----------------------------
 ###########################################################################
 
 
@@ -22,6 +22,11 @@ stations() %>%
   filter(start <= 1900, end >= 2000, interval == "day") %>%
   print(n=nrow(.))
 
+stations() %>%
+  filter(start <= 1900, end >= 2000, interval == "day") %>%
+  select(station_name) %>%
+  print(n=nrow(.))
+
 # Interesting selections:
 
 # airports: !is.na(TC_id)
@@ -33,7 +38,7 @@ stations() %>%
 
 # Ottawa and Toronto:
 # stns_id <- c(271, 568, 707, 2925, 4333, 4712, 5051)
-stns_id <- c(271, 568, 707, 4333, 5051)
+stns_id <- c(271, 568, 707, 4333, 4712, 4859, 4862, 5051)
 stns <- stations() %>%
   filter(station_id %in% stns_id, interval == "day")
 stns

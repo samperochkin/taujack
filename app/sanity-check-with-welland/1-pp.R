@@ -5,7 +5,6 @@
 # packages ----------------------------------------------------------------
 library(tidyverse)
 library(lubridate)
-library(lunar)
 library(ggplot2)
 library(spatstat.geom) # weighted ecdf
 
@@ -28,10 +27,12 @@ data <- data %>% mutate(date = as.Date(date),
 
 data <- data %>% mutate(time = as.integer(date),
                         yday = lubridate::yday(date),
-                        week = lubridate::week(date))
+                        week = lubridate::week(date),
+                        seas = lunar::terrestrial.season(date))
 
 # stations we look at
-stns_id <- c(4333, 5051)
+# stns_id <- c(4712, 5051)
+stns_id <- c(4859, 4862)
 data <- data %>%
   filter(station_id %in% stns_id) %>%
   arrange(station_id, date)
@@ -49,7 +50,7 @@ ggplot(data0, aes(x=year, y=mm_temp)) +
 year_len <- 365 + 6/24 + 9/60/24 + 9/60^2/24
 
 # create sines-cosines basis (for seasonal trend)
-nSC <- 12
+nSC <- 8
 for (i in 1:nSC){
   s <- paste0("s", i)
   c <- paste0("c", i)
@@ -64,29 +65,47 @@ row_id1 <- data$station_id == stns_id[1]
 row_id2 <- data$station_id == stns_id[2]
 r1 <- data[!is.na(data$max_temp) & row_id1,]$time %>% range %>% diff
 r2 <- data[!is.na(data$max_temp) & row_id2,]$time %>% range %>% diff
-# let us use one df per year
-nB <- round(c(r1, r2)/year_len)
-b_cols <- paste0("b", 1:max(nB))
-b1_cols <- paste0("b", 1:nB1)
-b2_cols <- paste0("b", 1:nB2)
+# let us use 8 and 10 df, respectively, then.
+nB <- round(c(r1,r2)/year_len*12) # ************************** RE-SPECIFY FOR EACH NEW STNS
+B1 <- splines::ns(data[row_id1,]$time, df = nB[1])
+B2 <- splines::ns(data[row_id2,]$time, df = nB[2])
+colnames(B1) <- paste0("b", 1:nB[1])
+colnames(B2) <- paste0("b", 1:nB[2])
 
-for(b in b_cols) data <- data %>% mutate(!!b := NA)
-data[row_id1,b1_cols] <- splines::ns(data[row_id1,]$time, df = nB[1])
-data[row_id2,b2_cols] <- splines::ns(data[row_id2,]$time, df = nB[2])
+data1 <- merge.data.frame(data[row_id1,], data.frame(B1, date=data[row_id1,]$date), by="date")
+data2 <- merge.data.frame(data[row_id2,], data.frame(B2, date=data[row_id2,]$date), by="date")
+# data <- rbind(data1,data2)
+# 
+# for (i in 1:max(ncol(B1), ncol(B2))){
+#   if(i %% 10 == 0) cat("Progress:", round(100*i/max(ncol(B1), ncol(B2)),2), "%\n")
+#   b <- paste0("b", i)
+#   data <- data %>% mutate(!!b := NA)
+#   if(i <= ncol(B1)) data[row_id1,] <- data[row_id1,] %>% mutate(!!b := B1[,i])
+#   if(i <= ncol(B2)) data[row_id2,] <- data[row_id2,] %>% mutate(!!b := B2[,i])
+# }
 
 # fit least-squares
 non_na <- !is.na(data$max_temp)
 ss <- paste0(" + s", 1:nSC, collapse = "")
 cs <- paste0(" + c", 1:nSC, collapse = "")
-ff1 <- paste0("max_temp ~ b1", paste0(" + b", 2:nB[1], collapse = ""), ss, cs) %>% as.formula
-ff2 <- paste0("max_temp ~ b1", paste0(" + b", 2:nB[2], collapse = ""), ss, cs) %>% as.formula
+ff1 <- paste0("max_temp ~ b1", paste0(" + b", 2:ncol(B1), collapse = ""), ss, cs, collapse = "")
+ff2 <- paste0("max_temp ~ b1", paste0(" + b", 2:ncol(B2), collapse = ""), ss, cs, collapse = "")
+ff1 <- as.formula(ff1)
+ff2 <- as.formula(ff2)
 
-# Ottawa
-lm_fit1 <- lm(formula = ff1, data = data[row_id1,])
+cols1 <- c("max_temp", paste0("s", 1:nSC), paste0("c", 1:nSC), paste0("b", 1:nB[1]))
+cols2 <- c("max_temp", paste0("s", 1:nSC), paste0("c", 1:nSC), paste0("b", 1:nB[2]))
+lm_fit1 <- lm(formula = ff1, data = data1[,cols1])
+lm_fit2 <- lm(formula = ff2, data = data2[,cols2])
 summary(lm_fit1)
-# Toronto
-lm_fit2 <- lm(formula = ff2, data = data[row_id2,])
 summary(lm_fit2)
+# # stns 1
+# lm_fit1 <- lm(formula = ff1, data = data[non_na,] %>% filter(station_id == stns_id[1]))
+# lm_fit1 <- lm(formula = ff1, data = data[non_na,] %>% filter(station_id == stns_id[1]))
+# summary(lm_fit1)
+# # stns 2
+# lm_fit2 <- lm(formula = ff2, data = data[non_na,] %>% filter(station_id == stns_id[2]))
+# summary(lm_fit2)
 
 data <- data %>% mutate(mu = NA , ctemp = NA)
 data[non_na & row_id1,] <- data[non_na & row_id1,] %>% 
@@ -121,6 +140,7 @@ lines(data$time[ii], data$mu[ii], col=2)
 
 # note that this breaks the equalities in the data
 # but there is still some heterogeneity in the variance
+# N <- 20000
 N <- 40000 
 plot(data$yday[data$station_id == stns_id[1]][1:N], data$max_temp[1:N], cex=.25)
 plot(data$yday[data$station_id == stns_id[1]][1:N], data$ctemp[1:N], cex=.25)
@@ -135,7 +155,7 @@ data <- data %>% mutate(pseudo_temp = NA, diff = NA, w1 = NA, w = NA)
 for(id in stns_id){
   cat("Working on ECDF for station ", id, ".\n")
   row_id <- data$station_id == id
-
+  
   for(tt in 1:366){
     if(tt %% 20 == 0) cat("progess: ", round(tt/366*100,2), "%\n")
     
@@ -185,4 +205,4 @@ tab[tab > 1]; sum(tab)
 
 
 # Save for later use ------------------------------------------------------
-saveRDS(data, "app/data/data_pp.rds")
+saveRDS(data, "app/data/data_pp_alt.rds")

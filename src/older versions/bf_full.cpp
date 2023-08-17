@@ -56,8 +56,6 @@ IntegerMatrix bruteForceFull(NumericMatrix X) {
   
   conquer(X_vec, C);
 
-  // convert C and return it
-  // return Rcpp::wrap(C);
   // convert C and return it as IntegerMatrix
   IntegerMatrix result(n, m);
   for (int i = 0; i < n; i++) {

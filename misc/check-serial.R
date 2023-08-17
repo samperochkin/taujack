@@ -3,7 +3,6 @@
 
 # Packages ----------------------------------------------------------------
 library(Rcpp)
-sourceCpp("src/dac.cpp")
 sourceCpp("src/dac_serial.cpp")
 sourceCpp("src/bf.cpp")
 
@@ -13,51 +12,19 @@ n <- 500
 d <- 5
 X <- matrix(runif(n*d),n,d)
 
-C1 <- sapply(2:d, \(k) bruteForce(X[,1:k]))
-C2 <- sapply(2:d, \(k) dac(X[,1:k], thresh = 10, brute_force = F))
-C3 <- dac_serial(X, thresh = 10, brute_force = F)
-
-all(C2 - C1 == 0)
-all(C3 - C1 == 0)
+C0 <- sapply(2:d, \(k) bruteForce(X[,1:k]))
+C1 <- dac_serial(X, thresh = 10)
+all(C0 - C1 == 0)
 
 
 
 # Compare runtimes --------------------------------------------------------
 n <- 30000
-d <- 5
+# n <- 50000
+d <- 6
 X <- matrix(runif(n*d),n,d)
-
 system.time(bruteForce(X))
-system.time(dac(X, thresh = 100, brute_force = F))
-system.time(dac_serial(X, thresh = 100, brute_force = F))
-
-
-n <- 100000
-d <- 5
-X <- matrix(runif(n*d),n,d)
-
-system.time(dac(X, thresh = 100, brute_force = F))
-system.time(dac_serial(X, thresh = 100, brute_force = F))
-
-
-
-
-# Compare with older version ----------------------------------------------
-n <- 100000
-d <- 5
-X <- matrix(runif(n*d),n,d)
-
-sourceCpp("src/dac_serial.cpp")
-system.time(dac_serial(X, thresh = 100, brute_force = F))
-system.time(dac_serial(X, thresh = 100, brute_force = F))
-
-sourceCpp("src/dac_serial_old.cpp")
-system.time(dac_serial(X, thresh = 100, brute_force = F))
-system.time(dac_serial(X, thresh = 100, brute_force = F))
-
-# reinstate newer version
-sourceCpp("src/dac_serial.cpp")
-
+system.time(dac_serial(X, thresh = 25))
 
 
 
@@ -74,7 +41,7 @@ sDep <- function(X, K){
 
 # setup
 n <- 1000
-N <- n*300
+N <- n*600
 d <- 4
 
 # generate data with classical dependence
@@ -86,16 +53,16 @@ X0 <- sDep(X0, K)
 
 # scale between 0 and 1 and plot
 X0 <- apply(X0,2,rank)/(N+1)
-plot(X[1:min(n,1000),1], type="o")
+plot(X[1:min(n,100),1], type="o")
 
 # approximate "true" values (th0 and sig0)
-C0 <- dac_serial(X0, thresh = 100, brute_force = F)[,d-1]
+C0 <- dac_serial(X0, thresh = 25, brute_force = F)[,d-1]
 th0 <- (2^(d-1) * sum(C0)/(N*(N-1)) - 1)/(2^(d-1) - 1)
 g0 <- (2^(d-1)*C0/(N-1) - 1)/(2^(d-1) - 1) - th0
 ss0 <- sapply(0:15, \(k){
   mean(g0[1:(N-k)]*g0[(k+1):N])
 })
-plot(0:15, ss0)
+plot(0:15, ss0, main="Summand in the variance formula of Sen")
 abline(h=0, lty=2, col=2)
 abline(v=K+1, lty=2, col=3)
 # sig0 <- 2*(ss0[1] + 2*sum(ss0[-1]))
@@ -123,7 +90,7 @@ for(k in 1:(N/n)){
 }
 
 # histogram to check if sig0 matches what we observed
-hist(sqrt(n)*(ths-th0), probability = T, breaks=15)
+hist(sqrt(n)*(ths-th0), probability = T, breaks=13)
 lines(seq(-10,10,.01),dnorm(seq(-10,10,.01),0,2*sqrt(sig0)))
 
 # histogram of sigma values just for fun
