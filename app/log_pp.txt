@@ -1,0 +1,526 @@
+
+R version 4.2.1 (2022-06-23) -- "Funny-Looking Kid"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Preprocessing of the raw data
+> # launched with 
+> # R CMD BATCH --vanilla --no-restore app/preprocessing.R app/log_pp.txt
+> 
+> # packages ----------------------------------------------------------------
+> library(tidyverse)
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+✔ tibble  3.1.8     ✔ dplyr   1.1.0
+✔ tidyr   1.2.1     ✔ stringr 1.4.1
+✔ readr   2.1.2     ✔ forcats 0.5.2
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+> library(lubridate)
+
+Attaching package: ‘lubridate’
+
+The following objects are masked from ‘package:base’:
+
+    date, intersect, setdiff, union
+
+> library(lunar)
+> library(ggplot2)
+> library(spatstat.geom) # weighted ecdf
+Loading required package: spatstat.data
+spatstat.geom 3.2-4
+> 
+> 
+> 
+> # load and preprocess data ------------------------------------------------
+> # stns_id <- readRDS("app/data/stns_id.rds")
+> # stns_id <- c(568, 4333, 5051)
+> stns_id <- c(271, 707, 4712, 4333, 5051)
+> p <- length(stns_id)
+> meta <- weathercan::stations() %>% filter(station_id %in% stns_id, interval == "day") %>%
++   print(nrow = nrow(.))
+The stations data frame hasn't been updated in over 4 weeks. Consider running `stations_dl()` to check for updates and make sure you have the most recent stations list available
+# A tibble: 5 × 16
+  prov  station…¹ stati…² clima…³ WMO_id TC_id   lat    lon   elev tz    inter…⁴
+  <chr> <chr>       <dbl> <chr>    <dbl> <chr> <dbl>  <dbl>  <dbl> <chr> <chr>  
+1 BC    QUATSINO      271 1036570     NA <NA>   50.5 -128.    3.42 Etc/… day    
+2 BC    AGASSIZ …     707 1100120     NA <NA>   49.2 -122.   15    Etc/… day    
+3 ON    OTTAWA C…    4333 6105976     NA WCG    45.4  -75.7  79.2  Etc/… day    
+4 ON    WELLAND      4712 6139445     NA <NA>   43.0  -79.3 175.   Etc/… day    
+5 ON    TORONTO      5051 6158350  71266 <NA>   43.7  -79.4 112.   Etc/… day    
+# … with 5 more variables: start <dbl>, end <dbl>, normals <lgl>,
+#   normals_1981_2010 <lgl>, normals_1971_2000 <lgl>, and abbreviated variable
+#   names ¹​station_name, ²​station_id, ³​climate_id, ⁴​interval
+> stns_name <- sapply(stns_id, \(i) meta %>% filter(station_id == i) %>% select(station_name) %>% unlist())
+> 
+> filepaths <- paste0("app/data/daily_data_", stns_id, ".rds")
+> data <- lapply(filepaths, readRDS) |> dplyr::bind_rows()
+> str(data)
+tibble [267,703 × 37] (S3: tbl_df/tbl/data.frame)
+ $ station_name      : chr [1:267703] "QUATSINO" "QUATSINO" "QUATSINO" "QUATSINO" ...
+ $ station_id        : num [1:267703] 271 271 271 271 271 271 271 271 271 271 ...
+ $ station_operator  : logi [1:267703] NA NA NA NA NA NA ...
+ $ prov              : chr [1:267703] "BC" "BC" "BC" "BC" ...
+ $ lat               : num [1:267703] 50.5 50.5 50.5 50.5 50.5 ...
+ $ lon               : num [1:267703] -128 -128 -128 -128 -128 ...
+ $ elev              : num [1:267703] 3.4 3.4 3.4 3.4 3.4 3.4 3.4 3.4 3.4 3.4 ...
+ $ climate_id        : chr [1:267703] "1036570" "1036570" "1036570" "1036570" ...
+ $ WMO_id            : chr [1:267703] NA NA NA NA ...
+ $ TC_id             : chr [1:267703] NA NA NA NA ...
+ $ date              : Date[1:267703], format: "1895-01-01" "1895-01-02" ...
+ $ year              : chr [1:267703] "1895" "1895" "1895" "1895" ...
+ $ month             : chr [1:267703] "01" "01" "01" "01" ...
+ $ day               : chr [1:267703] "01" "02" "03" "04" ...
+ $ qual              : chr [1:267703] NA NA NA NA ...
+ $ cool_deg_days     : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ cool_deg_days_flag: chr [1:267703] NA NA NA NA ...
+ $ dir_max_gust      : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ dir_max_gust_flag : chr [1:267703] NA NA NA NA ...
+ $ heat_deg_days     : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ heat_deg_days_flag: chr [1:267703] NA NA NA NA ...
+ $ max_temp          : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ max_temp_flag     : chr [1:267703] NA NA NA NA ...
+ $ mean_temp         : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ mean_temp_flag    : chr [1:267703] NA NA NA NA ...
+ $ min_temp          : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ min_temp_flag     : chr [1:267703] NA NA NA NA ...
+ $ snow_grnd         : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ snow_grnd_flag    : chr [1:267703] NA NA NA NA ...
+ $ spd_max_gust      : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ spd_max_gust_flag : chr [1:267703] NA NA NA NA ...
+ $ total_precip      : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ total_precip_flag : chr [1:267703] NA NA NA NA ...
+ $ total_rain        : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ total_rain_flag   : chr [1:267703] NA NA NA NA ...
+ $ total_snow        : num [1:267703] NA NA NA NA NA NA NA NA NA NA ...
+ $ total_snow_flag   : chr [1:267703] NA NA NA NA ...
+> 
+> #### time variables setup
+> data <- data %>% mutate(date = as.Date(date))
+> 
+> # add all dates for all stations
+> full_seq <- tibble(date = seq(as.Date("1840-01-01"),as.Date("2024-01-01"), by=1))
+> full_seq <- do.call("rbind", lapply(stns_id, \(i){
++   full_seq$station_id <- i
++   full_seq
++ }))
+> data <- right_join(data, full_seq, by=c("date", "station_id"))
+> 
+> data <- data %>% mutate(year = lubridate::year(date),
++                         month = lubridate::month(date),
++                         day = lubridate::mday(date),
++                         time = as.integer(date),
++                         yday = lubridate::yday(date),
++                         week = lubridate::week(date)) %>%
++   arrange(station_id, date)
+> data <- data %>% mutate(station_name = stns_name[match(station_id, stns_id)])
+> 
+> # data <- data %>% mutate(year = as.integer(year),
+> #                         month = as.integer(month),
+> #                         day = as.integer(day),
+> #                         time = as.integer(date),
+> #                         yday = lubridate::yday(date),
+> #                         week = lubridate::week(date)) %>%
+> #   arrange(station_id, date)
+> 
+> # quick look at summary of the data (clearly shows time trends)
+> data0 <- data %>% group_by(station_name, year) %>%
++   summarise(mm_temp = mean(mean_temp, na.rm=T))
+`summarise()` has grouped output by 'station_name'. You can override using the
+`.groups` argument.
+> ggplot(data0, aes(x=year, y=mm_temp)) +
++   geom_line() +
++   geom_point() +
++   facet_grid(rows="station_name", scales = "free_y")
+Warning messages:
+1: Removed 59 row(s) containing missing values (geom_path). 
+2: Removed 226 rows containing missing values (geom_point). 
+> 
+> 
+> # Estimate mean conditional on time of year -------------------------------
+> year_len <- 365 + 6/24 + 9/60/24 + 9/60^2/24
+> 
+> # create sines-cosines basis (for seasonal trend)
+> nSC <- 2
+> s_cols <- paste0("s", 1:nSC)
+> c_cols <- paste0("c", 1:nSC)
+> for (i in 1:nSC) data <- data %>%
++   mutate(!!s_cols[i] := sin(i*2*pi*time/year_len),
++          !!c_cols[i] := cos(i*2*pi*time/year_len))
+> 
+> 
+> # create natural spline basis (for long term time trend)
+> # for this check range for each station
+> row_ids <- sapply(stns_id, \(id) data$station_id == id)
+> bss <- lapply(1:p, \(k){
++   # data[row_ids[,k],] %>% filter(day == 21, month %in% c(6,12)) %>% select(time) %>% unlist
++   data[row_ids[,k],] %>% filter(day == 1, month == 1, year %in% seq(1840,2024,23)) %>% select(time) %>% unlist
++ })
+> 
+> for(b in paste("b", 1:max(sapply(bss, length)))) data <- data %>% mutate(!!b := NA)
+> nB <- rep(0, p); b_cols <- list()
+> for(k in 1:p){
++   B <- splines::bs(data[row_ids[,k],]$time, knots = c(bss[[k]]), degree = 2)
++   B <- B[,colSums(abs(B[!is.na(data[row_ids[,k],]$mean_temp),])) > 1e-5]
++   nB[k] <- ncol(B)
++   b_cols[[length(b_cols)+1]] <- paste0("b", 1:nB[k])
++   data[row_ids[,k],b_cols[[k]]] <- B
++   rm(B)
++ }
+> 
+> 
+> # fit least-squares
+> non_na <- !is.na(data$mean_temp) # for later
+> sc_cols2 <- paste0("(", paste0(c(s_cols[1], c_cols[1]), collapse = " + "), ")")
+> lms <- lapply(1:p, \(k){
++   b_cols2 <- paste0("(", paste0(b_cols[[k]], collapse = " + "), ")")
++   ff <- paste0("mean_temp ~ ", sc_cols2, "*", b_cols2)
++   lm(formula = as.formula(ff), data = data[non_na & row_ids[,k], ])
++ })
+> 
+> sapply(lms, \(l) summary(l))
+              [,1]                                                           
+call          expression                                                     
+terms         mean_temp ~ (s1 + c1) * (b1 + b2 + b3 + b4 + b5 + b6 + b7 + b8)
+residuals     numeric,43950                                                  
+coefficients  numeric,96                                                     
+aliased       logical,27                                                     
+sigma         2.40622                                                        
+df            integer,3                                                      
+r.squared     0.7623518                                                      
+adj.r.squared 0.7622274                                                      
+fstatistic    numeric,3                                                      
+cov.unscaled  numeric,576                                                    
+              [,2]                                                           
+call          expression                                                     
+terms         mean_temp ~ (s1 + c1) * (b1 + b2 + b3 + b4 + b5 + b6 + b7 + b8)
+residuals     numeric,46148                                                  
+coefficients  numeric,96                                                     
+aliased       logical,27                                                     
+sigma         3.262498                                                       
+df            integer,3                                                      
+r.squared     0.7529925                                                      
+adj.r.squared 0.7528693                                                      
+fstatistic    numeric,3                                                      
+cov.unscaled  numeric,576                                                    
+              [,3]         
+call          expression   
+terms         terms,3      
+residuals     numeric,47620
+coefficients  numeric,108  
+aliased       logical,30   
+sigma         4.468528     
+df            integer,3    
+r.squared     0.8190441    
+adj.r.squared 0.8189452    
+fstatistic    numeric,3    
+cov.unscaled  numeric,729  
+              [,4]                                                           
+call          expression                                                     
+terms         mean_temp ~ (s1 + c1) * (b1 + b2 + b3 + b4 + b5 + b6 + b7 + b8)
+residuals     numeric,48676                                                  
+coefficients  numeric,96                                                     
+aliased       logical,27                                                     
+sigma         4.913594                                                       
+df            integer,3                                                      
+r.squared     0.839724                                                       
+adj.r.squared 0.8396482                                                      
+fstatistic    numeric,3                                                      
+cov.unscaled  numeric,576                                                    
+              [,5]         
+call          expression   
+terms         terms,3      
+residuals     numeric,59651
+coefficients  numeric,120  
+aliased       logical,33   
+sigma         4.247675     
+df            integer,3    
+r.squared     0.8320056    
+adj.r.squared 0.8319239    
+fstatistic    numeric,3    
+cov.unscaled  numeric,900  
+> # # Bakerville
+> # summary(lms[[1]])
+> # # Ottawa
+> # summary(lms[[2]])
+> # # Toronto
+> # summary(lms[[3]])
+> 
+> # register the results
+> data <- data %>% mutate(mu = NA , ctemp = NA)
+> for(k in 1:p){
++   data[non_na & row_ids[,k],] <- data[non_na & row_ids[,k],] %>% 
++     mutate(mu = lms[[k]]$fitted.values, ctemp = mean_temp - mu)
++ }
+> 
+> # remove b cols of data (for memory)
+> data <- data %>% 
++   select(!any_of(b_cols[[which.max(sapply(b_cols, length))]])) %>%
++   select(!any_of(c(s_cols, c_cols)))
+> gc()
+           used  (Mb) gc trigger  (Mb)  max used  (Mb)
+Ncells  2496472 133.4    4539145 242.5   4539145 242.5
+Vcells 32644651 249.1  107261380 818.4 107237767 818.2
+> 
+> # quick check
+> data0 <- data %>% group_by(year, station_name) %>%
++   summarise(m_mt = mean(mean_temp, na.rm=T),
++             m_mu = mean(mu, na.rm=T))
+`summarise()` has grouped output by 'year'. You can override using the
+`.groups` argument.
+> ggplot(data0, aes(x=year, y=m_mt, col=station_name, group=station_name)) +
++   theme_light() +
++   geom_line(data = data0, aes(y=m_mu), col=1) +
++   geom_point()
+Warning messages:
+1: Removed 219 row(s) containing missing values (geom_path). 
+2: Removed 226 rows containing missing values (geom_point). 
+> 
+> data0 <- data %>% filter(year %in% 1950:1970) %>%
++   group_by(year, month, station_name) %>%
++   summarise(m_mt = mean(mean_temp, na.rm=T),
++             m_mu = mean(mu, na.rm=T))
+`summarise()` has grouped output by 'year', 'month'. You can override using the
+`.groups` argument.
+> ggplot(data0, aes(x=year+month/12, y=m_mt, col=station_name, group=station_name)) +
++   geom_line() + geom_point() +
++   geom_line(data = data0, aes(y=m_mu)) +
++   facet_wrap(~station_name)
+Warning message:
+Removed 19 rows containing missing values (geom_point). 
+> 
+> 
+> # # random check of the fits
+> # # some plots might show a break (when the data goes from Ottawa to Toronto)
+> # k <- sample(nrow(data),1)
+> # ii <- k + 1:365
+> # plot(data$time[ii], data$mean_temp[ii])
+> # lines(data$time[ii], data$mu[ii], col=2)
+> 
+> 
+> # note that this breaks the equalities in the data
+> # but there is still some heterogeneity in the variance
+> N <- 20000 
+> par(mfrow=c(p,2), mar=c(1,1,0,0))
+> for(k in 1:p){
++   ri <- row_ids[,k] & !is.na(data$mean_temp)
++   plot(data$yday[ri][1:N], data$mean_temp[ri][1:N], cex=.25)
++   plot(data$yday[ri][1:N], data$ctemp[ri][1:N], cex=.25)
++ }
+> par(mfrow=c(1,1), mar=c(2,2,1,1))
+> 
+> 
+> 
+> # Compute pseudo-observations using ECDF ----------------------------------
+> data <- data %>% mutate(pseudo_temp = NA, diff = NA, w1 = NA, w = NA)
+> for(k in 1:p){
++   id <- stns_id[k]
++   cat("Working on ECDF for station ", id, ".\n")
++   row_id <- row_ids[,k]
++ 
++   for(tt in 1:366){
++     if(tt %% 20 == 0) cat("progess: ", round(tt/366*100,2), "%\n")
++     
++     # construct weights based on yday using gaussian kernel
++     data[row_id,] <- data[row_id,] %>%
++       mutate(diff = tt - (time %% year_len)) %>%
++       mutate(diff = abs(pmin(diff, year_len - diff))) %>%
++       mutate(w1 = dnorm(diff,0,2)) %>%
++       mutate(w = w1/sum(w1, na.rm = T)) 
++     
++     # construct ecdf function using all the data
++     wecdf <- spatstat.geom::ewcdf(data[row_id,]$ctemp, data[row_id,]$w)
++     
++     # compute ecdf only for yday we care for
++     ind <- which(data[row_id,]$yday == tt & !is.na(data[row_id,]$ctemp))
++     data[row_id,][ind,] <- data[row_id,][ind,] %>%
++       mutate(pseudo_temp = wecdf(ctemp))
++     
++     # heuristic correction for the largest (pseudo_obs = 1)
++     # to avoid modifying all values (say, with pseudo_obs = pseudo_obs*n_ind/(n_ind+1))
++     n_ind <- length(ind)
++     data[row_id,][ind,] <- data[row_id,][ind,] %>%
++       mutate(pseudo_temp = ifelse(pseudo_temp == 1, 1-1/(2*n_ind), pseudo_temp))
++   }
++ }
+Working on ECDF for station  271 .
+progess:  5.46 %
+progess:  10.93 %
+progess:  16.39 %
+progess:  21.86 %
+progess:  27.32 %
+progess:  32.79 %
+progess:  38.25 %
+progess:  43.72 %
+progess:  49.18 %
+progess:  54.64 %
+progess:  60.11 %
+progess:  65.57 %
+progess:  71.04 %
+progess:  76.5 %
+progess:  81.97 %
+progess:  87.43 %
+progess:  92.9 %
+progess:  98.36 %
+Working on ECDF for station  707 .
+progess:  5.46 %
+progess:  10.93 %
+progess:  16.39 %
+progess:  21.86 %
+progess:  27.32 %
+progess:  32.79 %
+progess:  38.25 %
+progess:  43.72 %
+progess:  49.18 %
+progess:  54.64 %
+progess:  60.11 %
+progess:  65.57 %
+progess:  71.04 %
+progess:  76.5 %
+progess:  81.97 %
+progess:  87.43 %
+progess:  92.9 %
+progess:  98.36 %
+Working on ECDF for station  4712 .
+progess:  5.46 %
+progess:  10.93 %
+progess:  16.39 %
+progess:  21.86 %
+progess:  27.32 %
+progess:  32.79 %
+progess:  38.25 %
+progess:  43.72 %
+progess:  49.18 %
+progess:  54.64 %
+progess:  60.11 %
+progess:  65.57 %
+progess:  71.04 %
+progess:  76.5 %
+progess:  81.97 %
+progess:  87.43 %
+progess:  92.9 %
+progess:  98.36 %
+Working on ECDF for station  4333 .
+progess:  5.46 %
+progess:  10.93 %
+progess:  16.39 %
+progess:  21.86 %
+progess:  27.32 %
+progess:  32.79 %
+progess:  38.25 %
+progess:  43.72 %
+progess:  49.18 %
+progess:  54.64 %
+progess:  60.11 %
+progess:  65.57 %
+progess:  71.04 %
+progess:  76.5 %
+progess:  81.97 %
+progess:  87.43 %
+progess:  92.9 %
+progess:  98.36 %
+Working on ECDF for station  5051 .
+progess:  5.46 %
+progess:  10.93 %
+progess:  16.39 %
+progess:  21.86 %
+progess:  27.32 %
+progess:  32.79 %
+progess:  38.25 %
+progess:  43.72 %
+progess:  49.18 %
+progess:  54.64 %
+progess:  60.11 %
+progess:  65.57 %
+progess:  71.04 %
+progess:  76.5 %
+progess:  81.97 %
+progess:  87.43 %
+progess:  92.9 %
+progess:  98.36 %
+> 
+> 
+> 
+> # resulting histograms are even better than expected
+> ggplot(data, aes(x = pseudo_temp, fill=as.factor(yday))) +
++   theme(legend.position = "none") +
++   geom_histogram(breaks=seq(0,1,.05), position = position_stack()) +
++   facet_wrap(~station_name)
+Warning message:
+Removed 89985 rows containing non-finite values (stat_bin). 
+> 
+> # quick check of the other operations (tt = 366, last it. of for loop)
+> # s <- sample(nrow(data) - 1000,1)
+> # par(mfrow=c(3,1))
+> # plot(data$pseudo_temp[s + 1:100], type="o") # makes sense
+> # plot(data$date[s + 1:1000], data$diff[s + 1:1000]) # linear in time, as expected
+> # plot(data$date[s + 1:1000], data$w[s + 1:1000], type="l") # select only end of year periods
+> 
+> # note that there are equalities, but very very few of them. can disregard.
+> apply(row_ids, 2, \(r){
++   tab <- table(data[r,]$pseudo_temp)
++   tab[tab > 1]
++ })
+[[1]]
+
+0.0438455550772677  0.144297850208206  0.169846023269759  0.178677056481833 
+                 2                  2                  2                  2 
+ 0.356286335271052    0.3631674764344  0.985976563404907  0.995833333333333 
+                 2                  2                  2                  4 
+ 0.995867768595041  0.995901639344262 
+                 3                  2 
+
+[[2]]
+
+0.0333206843020377  0.136823989502912  0.171778414403779  0.678804032986973 
+                 2                  2                  2                  3 
+ 0.700810079813281  0.813806020396573  0.980827468686583  0.996031746031746 
+                 3                  2                  2                  2 
+ 0.996062992125984 
+                 3 
+
+[[3]]
+
+0.300662555019773 0.423041572112392 0.549876221771084 0.627880819336275 
+                2                 2                 2                 2 
+0.851669958786302        0.99609375 0.996124031007752 0.996153846153846 
+                2                 2                 3                 2 
+
+[[4]]
+
+0.292445907995692 0.513030675144614 0.661237445928779 0.996240601503759 
+                2                 2                 2                 6 
+0.996268656716418 
+                3 
+
+[[5]]
+
+0.199885965489964  0.67175535873763 0.770230019431482 0.996932515337423 
+                3                 2                 2                 7 
+0.996951219512195 
+                4 
+
+> 
+> 
+> 
+> # Save for later use ------------------------------------------------------
+> saveRDS(data, "app/data/data_pp_full.rds")
+> 
+> proc.time()
+    user   system  elapsed 
+1113.674    3.660 1117.532 

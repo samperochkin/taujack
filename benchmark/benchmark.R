@@ -9,7 +9,7 @@ library(parallel)
 # functions to benchmark
 library(pcaPP) # cor.fk
 sourceCpp("src/ms.cpp")   # for Knight's extended alg.
-sourceCpp("src/dac_serial.cpp")  # divide-and-conquer alg.
+sourceCpp("src/dac_seq.cpp")  # divide-and-conquer alg.
 sourceCpp("src/bf.cpp")   # brute force alg.
 source("functions.R")       # wrappers (performs re-ordering if necessary)
 
@@ -29,19 +29,19 @@ cat("Number of row in sim_grid: ", nrow(sim_grid), "\n")
 ns <- 2^ks
 
 for(x in seq_along(ks)){
-    times <- mclapply(which(sim_grid$k == ks[x]), \(s){
-
+  times <- mclapply(which(sim_grid$k == ks[x]), \(s){
+    
     cat(".\n")
-
+    
     rep_id <- sim_grid[s,]$rep_id
     n <- sim_grid[s,]$n
     k <- sim_grid[s,]$k
     tau <- sim_grid[s,]$tau
     rho <- sim_grid[s,]$rho
-  
+    
     set.seed(34*s)
     X <- (rnorm(n, 0, sqrt(rho)) + matrix(rnorm(n*10, 0, sqrt(1-rho)), n, 10))
-  
+    
     # very fast, needs many replications to get a good estimate
     time_knight_o <- system.time(replicate(100, cor.fk(X[,1:2])))[[3]]/100
     time_knight_e <- system.time(replicate(100, taujack_ms(X[,1:2])))[[3]]/100
@@ -52,7 +52,7 @@ for(x in seq_along(ks)){
       K <- ifelse(tau == 1 | k <= 12, 50, 5)
       time_dac[r] <- system.time(replicate(K, taujack_dac(X[,1:ps[r]], thresh=25L)))[[3]]/K
     }
-  
+    
     # not fast, unless n is small
     time_bf <- as.numeric(c(NA, NA))
     if(k <= 15){
@@ -62,10 +62,10 @@ for(x in seq_along(ks)){
         }else{
           K <- 1
         }
-        time_bf[r] <- system.time(replicate(K, taujack_bf(X[,1:ps_sub[r]])))[[3]]/K
+        time_bf[r] <- system.time(replicate(K, taujack_bf(X[,1:ps_sub[r]], seq = T)))[[3]]/K
       }
     }
-
+    
     dt <- data.table(rep_id=rep_id, n=n, tau=tau, rho=rho, p = c(2, 2, ps, ps_sub),
                      fun = c("Knight (original, KO)", "Knight (extended, KE)",
                              rep(c("divide-and-conquer (DAC)"), each=length(ps)),
@@ -74,6 +74,6 @@ for(x in seq_along(ks)){
     
     return(dt)
   }, mc.cores = 12) |> rbindlist()
-
+  
   fwrite(times, paste0("benchmark/times", x, ".csv"))
 }

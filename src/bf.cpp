@@ -40,7 +40,7 @@ void conquer(const std::vector<std::vector<double>>& X,
   }
 }
 
-void conquer_serial(const std::vector<std::vector<double>>& X,
+void conquer_seq(const std::vector<std::vector<double>>& X,
                           std::vector<std::vector<int>>& D) {
   int n = X.size();
   int d = X[0].size();
@@ -103,7 +103,7 @@ void conquer_all(const std::vector<std::vector<double>>& X,
  
 
 // [[Rcpp::export]]
-IntegerVector bruteForce(NumericMatrix X, bool serial = false, bool all = false) {
+IntegerVector bruteForce(NumericMatrix X, bool seq = false, bool all = false) {
   int n = X.nrow();
   int d = X.ncol();
   
@@ -120,7 +120,7 @@ IntegerVector bruteForce(NumericMatrix X, bool serial = false, bool all = false)
   int K;
   if(all){
     K = static_cast<int>(std::pow(2, d-1));
-  } else if(serial){
+  } else if(seq){
     K = d-1;
   } else{
     K = 1;
@@ -131,14 +131,14 @@ IntegerVector bruteForce(NumericMatrix X, bool serial = false, bool all = false)
   
   if(all){
     conquer_all(X_vec, CoD);
-  }else if(serial){
-    conquer_serial(X_vec, CoD);
+  }else if(seq){
+    conquer_seq(X_vec, CoD);
   }else{
     conquer(X_vec, CoD);
   }
     
   IntegerMatrix C_out(n,K);
-  if(serial & !all){
+  if(seq & !all){
     for (int i = 0; i < n; i++) {
       C_out(i, 0) = CoD[i][0];
       for (int j = 1; j < K; j++) {
