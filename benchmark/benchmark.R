@@ -17,7 +17,7 @@ source("functions.R")       # wrappers (performs re-ordering if necessary)
 # Benchmark ---------------------------------------------------------------
 num_rep <- 100
 taus <- c(0, .25, .5, .75, 1)
-ks <- 8:18 # (n = 2^k)
+ks <- 8:16 # (n = 2^k)
 ps <- seq(2,10,2) # dimensions considered
 ps_sub <- ps[c(1,length(ps))] # dimensions considered for bf alg.
 
@@ -28,7 +28,7 @@ cat("Number of row in sim_grid: ", nrow(sim_grid), "\n")
 
 ns <- 2^ks
 
-for(x in seq_along(ks)){
+for(x in seq_along(ks)[length(ks)]){
   times <- mclapply(which(sim_grid$k == ks[x]), \(s){
     
     cat(".\n")
@@ -55,7 +55,7 @@ for(x in seq_along(ks)){
     
     # not fast, unless n is small
     time_bf <- as.numeric(c(NA, NA))
-    if(k <= 15){
+    if(k <= 16){
       for(r in c(1,2)){
         if(k <= 12){
           K <- 10
