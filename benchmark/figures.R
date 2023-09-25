@@ -105,3 +105,117 @@ gg <- ggplot(times0, aes(x = n, y = mean_time, linetype=as.factor(p), col=as.fac
   geom_point() +
   facet_wrap(~tau, labeller = label_bquote(cols = tau == .(tau)))
 gg
+
+
+
+
+
+
+times0 <- rbind(
+  times[, .(time = mean(time), type = "mean", N = .N), .(n,tau,p,fun)],
+  times[, .(time = min(time), type = "min", N = .N), .(n,tau,p,fun)],
+  times[, .(time = max(time), type = "max", N = .N), .(n,tau,p,fun)]
+)
+times0$type <- factor(times0$type,
+                      levels = c("min", "mean", "max"),
+                      labels = c("min. runtime", "mean runtime", "max. runtime"))
+
+k <- length(unique(times0$p))
+
+gg <- ggplot(times0[p %in% c(2,4,6,10)], aes(x = log(n,2), y = log(time,2), linetype=as.factor(p), col=as.factor(fun))) +
+  theme_bw() +
+  theme(aspect.ratio = 1,
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=9),
+        legend.position = "bottom",
+        legend.direction = "vertical",
+        legend.background = element_rect(colour="gray"),
+        legend.title = element_text(size = 10),
+        legend.text=element_text(size=10),
+        panel.spacing = unit(0.5, "lines"),
+        strip.text.x = element_text(size = 10)) +
+  scale_y_continuous(breaks = seq(-14,2,4)) +
+  xlab(expression(log[2]~n)) +
+  ylab(expression(log[2](average~runtime))) +
+  labs(col="algorithm") +
+  scale_linetype_manual(name = "dimension (p)", values = c(1,2,3,4)) +
+  geom_line(linewidth=.5) +
+  # geom_point(size=.25) +
+  # geom_line() +
+  # geom_point() +
+  # facet_grid(tau~type, labeller = label_bquote(cols = tau == .(tau)))
+  # facet_grid(tau~type)
+  # facet_grid(type~tau, labeller = label_bquote(cols = tau == .(tau)))
+  facet_grid(tau~type, labeller = label_bquote(rows = tau == .(tau)))
+gg
+
+pdf("res_full.pdf", height = 8.5, width = 8.5)
+print(gg)
+dev.off()
+
+
+
+
+
+gg <- ggplot(times0[p %in% c(2,4,6,10) & type == "mean runtime" & tau %in% c(0,.5,1)],
+             aes(x = log(n,2), y = log(time,2), linetype=as.factor(p), col=as.factor(fun))) +
+  theme_bw() +
+  theme(aspect.ratio = 1,
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=9),
+        legend.position = "bottom",
+        legend.direction = "vertical",
+        legend.background = element_rect(colour="gray"),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size=10, margin = margin(r = 10, unit = "pt")),
+        # legend.spacing.x = unit(.5, "cm"),
+        panel.spacing = unit(0.5, "lines"),
+        strip.text.x = element_text(size = 10)) +
+  guides(col = guide_legend(ncol=2), linetype = guide_legend(ncol=2)) +
+  scale_y_continuous(breaks = seq(-14,2,4)) +
+  xlab(expression(log[2]~n)) +
+  ylab(expression(log[2](average~runtime))) +
+  labs(col="algorithm") +
+  scale_linetype_manual(name = "dimension (p)", values = c(1,2,3,4)) +
+  geom_line(linewidth=.5) +
+  # geom_point(size=.25) +
+  facet_grid(~tau, labeller = label_bquote(cols = tau == .(tau)))
+gg
+
+pdf("res.pdf", height = 3.5, width = 6.5)
+print(gg)
+dev.off()
+
+
+
+
+gg <- ggplot(times0[p %in% c(2,4,6,10) & type == "mean runtime" & tau %in% c(0,.5,1)],
+             aes(x = log(n,2), y = log(time,2), linetype=as.factor(p), col=as.factor(fun))) +
+  theme_bw() +
+  theme(aspect.ratio = 1,
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=9),
+        legend.position = "right",
+        legend.direction = "vertical",
+        legend.background = element_rect(colour="gray"),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size=10),
+        # legend.text = element_text(size=10, margin = margin(r = 10, unit = "pt")),
+        # legend.spacing.x = unit(.5, "cm"),
+        panel.spacing = unit(0.5, "lines"),
+        strip.text.x = element_text(size = 10)) +
+  # guides(col = guide_legend(ncol=2), linetype = guide_legend(ncol=2)) +
+  guides(linetype = guide_legend(ncol=2)) +
+  scale_y_continuous(breaks = seq(-14,2,4)) +
+  xlab(expression(log[2]~n)) +
+  ylab(expression(log[2](average~runtime))) +
+  labs(col="algorithm") +
+  scale_linetype_manual(name = "dimension (p)", values = c(1,2,3,4)) +
+  geom_line(linewidth=.5) +
+  # geom_point(size=.25) +
+  facet_grid(~tau, labeller = label_bquote(cols = tau == .(tau)))
+gg
+
+pdf("res.pdf", height = 5, width = 6.5)
+print(gg)
+dev.off()
