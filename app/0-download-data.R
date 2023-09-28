@@ -3,6 +3,9 @@
 # Script downloading data from Weather Canada -----------------------------
 ###########################################################################
 
+#### IMPORTANT NOTE ####
+# This script was run using weathercan package version 0.6.3
+# There seems to be a bug in newer version, or at least some incompatible with the following code.
 
 
 # packages ----------------------------------------------------------------
@@ -36,18 +39,18 @@ stations() %>%
 #   dplyr::select(station_id) %>%
 #   unlist(use.names = F)
 
-# Ottawa and Toronto:
-# stns_id <- c(271, 568, 707, 2925, 4333, 4712, 5051)
-stns_id <- c(271, 568, 707, 4333, 4712, 4859, 4862, 5051)
+# stns_id <- c(271, 568, 707, 4333, 4712, 4859, 4862, 5051)
+stns_id <- c(4712, 5051, 4333)
 stns <- stations() %>%
   filter(station_id %in% stns_id, interval == "day")
 stns
 
 
+
 # download raw data -------------------------------------------------------
 
-# from terminal:
-# R CMD BATCH --no-restore app/download-data.R app/log_dd.txt
+# from terminal (see note at beginning of script):
+# R CMD BATCH --vanilla --no-restore app/0-download-data.R app/log_dd.txt
 
 for(stn in stns_id){
   data <- weather_dl(stn, interval = "day", trim = F, verbose = T)

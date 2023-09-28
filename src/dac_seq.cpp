@@ -286,7 +286,7 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
   for(int i = split0; i < mid-l; i++) D[ids[l+i]][k0-1] += split1;
   for(int j = 0; j < split1; j++) D[ids[mid+j]][k0-1] += mid - l - split0;
   
-  // need further investigation on k0+1 (re-divide)
+  // need further investigation on k0 (re-divide)
   divideAndConquer2(X, D, thresh, ids, l, l+split0, mid, mid+split1, k0, false);
   divideAndConquer2(X, D, thresh, ids, l+split0, mid, mid+split1, r, k0, false);
   
