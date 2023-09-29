@@ -54,7 +54,8 @@ s <- which(sim_grid$k == ks[x])[401]
   r <- 2
   # if(!(tau < 1 & k > 16)){
   #   for(r in seq_along(ps))
-      time_dac[r] <- system.time(replicate(K, taujack_dac(X[,1:ps[r]], thresh=25L)))[[3]]/K
+        taujack_dac(X[,1:ps[r]], thresh=25L)
+        # time_dac[r] <- system.time(replicate(K, taujack_dac(X[,1:ps[r]], thresh=25L)))[[3]]/K
   # }
   
   # not fast, unless n is small
