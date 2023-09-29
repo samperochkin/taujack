@@ -67,12 +67,14 @@ taujack_dac <- function(X, thresh = 25L, brute_force = F, K_serial = 0, returnC 
     (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
   }, simplify = "array")
   if(dd == 1) Zh <- array(Zh, c(1,1,K_serial+1))
-  if(K_serial > 0){
-    Zh[,,-1] <- Zh[,,-1] + aperm(Zh[,,-1], c(2,1,3))
-    Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
-  }else{
-    Zsum <- 0
+  
+  if(K_serial == 0){
+    return(list(Th = colMeans(gs),
+                Sh = 4*Zh[,,1]))
   }
+  
+  Zh[,,-1] <- Zh[,,-1] + aperm(Zh[,,-1], c(2,1,3))
+  Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
 
   return(list(Th = colMeans(gs),
               Sh = 4*(Zh[,,1] + Zsum),
@@ -94,13 +96,15 @@ taujack_bf <- function(X, seq = F, K_serial = 0, returnC = F){
     (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
   }, simplify = "array")
   if(dd == 1) Zh <- array(Zh, c(1,1,K_serial+1))
-  if(K_serial > 0){
-    Zh[,,-1] <- Zh[,,-1] + aperm(Zh[,,-1], c(2,1,3))
-    Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
-  }else{
-    Zsum <- 0
+  
+  if(K_serial == 0){
+    return(list(Th = colMeans(gs),
+                Sh = 4*Zh[,,1]))
   }
   
+  Zh[,,-1] <- Zh[,,-1] + aperm(Zh[,,-1], c(2,1,3))
+  Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
+
   return(list(Th = colMeans(gs),
               Sh = 4*(Zh[,,1] + Zsum),
               Zh = Zh))

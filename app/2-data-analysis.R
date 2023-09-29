@@ -113,7 +113,7 @@ diff(rtimes_df[rtimes_df$p == 31,]$runtime)
 #### Pairwise tau at multiple lags for each stations ####
 #########################################################
 
-K <- 50 # number of terms of the zeta sum we want to compute
+K <- 100 # number of terms of the zeta sum we want to compute
 res <- lapply(1:q, \(k){ # Cna2tsz takes a bit of time, but nothing crazy
   cat("Work on k=", k,".\n")
   i <- (k-1)*p + 1 # desired time series (r, below, is the lagged one)
@@ -130,14 +130,14 @@ Ths
 sapply(Shs, matrixcalc::is.positive.definite)
 
 ####---- select number of terms we want to use in the zeta sum 
-k <- 3 # station (change as wished)
+k <- 1 # station (change as wished, from 1 to 3)
 i <- 1 # we focus on tau_ij (in the plots only)
 par(mfrow = c(2,5), mar=c(2,2,3,1))
-
-# computes Z + t(Z)
 Zh <- Zhs[[k]]
-Zh <- Zh + aperm(Zh, c(2,1,3))
-for(j in 1:min(L,10)) plot(Zh[i,j,], main = paste0("pair: (",i,",",j,")"), type="l")
+for(j in 1:min(L,10)){
+  plot(Zh[i,j,], main = paste0("pair: (",i,",",j,")"), type="l", ylim = range(Zh[i,1:min(L,10),]))
+  abline(h=0, lty=2, col=2)
+} 
 
 # computes the series of partial sums of Z + t(Z), to which Z0 is added
 Shcs <- 4*apply(Zh, c(1,2), \(z) z[1] + cumsum(z[-1])) |> aperm(perm = c(2,3,1))
@@ -151,8 +151,8 @@ par(mfrow = c(1,1), mar=c(2,2,3,1))
 Shs <- lapply(Zhs, Zh2Sh, K=20)
 sapply(Shs, matrixcalc::is.positive.definite)
 
-# plot (jsut below is a choice of zoom)
-cc <- NULL # none
+# plot (with choice of zoom)
+cc <- NULL # no zoom
 # cc <- coord_cartesian(xlim = c(1,1.5), ylim = c(.32,.49)) # lag-1
 # cc <- coord_cartesian(xlim = c(2,5), ylim = c(.07,.3)) # lag-2 to 5
 # cc <- coord_cartesian(xlim = c(L-5,L), ylim = c(0,.04)) # tail
@@ -170,7 +170,7 @@ data.frame(city = rep(stns_name, each=L), lag = rep(1:L, times=q), p = p,
 #### Multivariate tau for each stations ####
 ############################################
 
-K <- 50 # number of terms of the zeta sum we want to compute
+K <- 100 # number of terms of the zeta sum we want to compute
 res <- lapply(1:q, \(k){ # Cna2tsz takes a bit of time, but nothing crazy
   cat("Work on k=", k,".\n")
   dac_seq(pickY(k)) |> C2Cna(na_rows = na_rowss[[k]]) |> Cna2tsz(K_serial = K)
@@ -182,21 +182,27 @@ Zhs <- lapply(res, "[[", "Zh")
 # quick look
 Ths
 sapply(Shs, matrixcalc::is.positive.definite)
+# when we focus on the first ten components to avoid numerical instability
+sapply(Shs, \(S) matrixcalc::is.positive.definite(S[1:10, 1:10]))
 
 ####---- select number of terms we want to use in the zeta sum 
 k <- 1 # station (change as wished)
 i <- 1 # we focus on tau_ij (in the plots only)
 par(mfrow = c(2,5), mar=c(2,2,3,1))
-
-# computes Z + t(Z)
 Zh <- Zhs[[k]]
-for(j in 1:min(L,10)) plot(Zh[i,j,], main = paste0("pair: (",i,",",j,")"), type="l")
+for(j in 1:min(L,10)){
+  plot(Zh[i,j,], main = paste0("pair: (",i,",",j,")"), type="l")
+  abline(h=0, lty=2, col=2)
+} 
 
 # computes the series of partial sums of Z, to which Z0 is added
 Shcs <- 4*apply(Zh, c(1,2), \(z) z[1] + cumsum(z[-1])) |> aperm(perm = c(2,3,1))
-for(j in 1:min(L,10)) plot(Shcs[i,j,], main = paste0("pair: (",i,",",j,")"),
-                           ylim = range(Shcs[i,1:min(L,10),], na.rm=T), type="l")
-# these plots look like what I have seen on synthetic data
+for(j in 1:min(L,10)){
+  plot(Shcs[i,j,], main = paste0("pair: (",i,",",j,")"), ylim = range(Shcs[i,1:min(L,10),], na.rm=T), type="l")
+  abline(h=0, lty=2, col=2)
+}
+
+# looks like similar plots from synthetic data
 par(mfrow = c(1,1), mar=c(2,2,3,1))
 ####-----------------------------
 
@@ -225,8 +231,8 @@ data.frame(city = rep(stns_name, each=L), lag = rep(1:L, times=q), p = p,
 # In what follows, we mimic what Cna2tsz does, but we account for
 # the overlap between some of the data from distinct time series
 
-# Let's focus on the first 5 lags, for convenience
-L <- 5
+# Let's focus on the first 10 lags, for convenience
+L <- 1
 p <- L+1
 K <- 20
 
@@ -238,7 +244,7 @@ Th <- colMeans(gh, na.rm=T)
 nn0 <- t(!is.na(gh)) %*% !is.na(gh)
 
 Zh <- sapply(0:K, \(j){
-  if(k %% 5 == 0) cat(round(100*k/(K + 1),1), "% -- ")
+  if(j %% 5 == 0) cat(round(100*j/(K + 1),1), "% -- ")
   
   G1 <- gh[1:(N-j),,drop=F]
   G2 <- gh[(j+1):N,,drop=F]
@@ -263,12 +269,10 @@ Zh <- sapply(0:K, \(j){
   
   return(z)
 }, simplify = "array")
-
 Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
 Sh <- 4*(Zh[,,1] + Zsum)
 image(t(Sh[(q*p-q):1,]))
 matrixcalc::is.positive.definite(Sh)
-
 
 #####################
 #### ACTUAL TEST ####
