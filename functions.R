@@ -52,7 +52,7 @@ taujack_dac <- function(X, thresh = 25L, brute_force = F, K_serial = 0, returnC 
   if(brute_force){
     C <- bruteForce(X, seq = T)
   }else{
-    X <- apply(X, 2, rank)
+    # X <- apply(X, 2, rank)
     C <- dac_seq(X, thresh = thresh, brute_force = F)
   }
   

@@ -1,4 +1,6 @@
 # File used to perform the benchmarking the algorithms.
+# ran with
+# R --vanilla --no restore CMD BATCH benchmark/benchmark.R benchmark/log.txt
 
 # Packages ----------------------------------------------------------------
 library(Rcpp)
@@ -17,7 +19,7 @@ source("functions.R")       # wrappers (performs re-ordering if necessary)
 # Benchmark ---------------------------------------------------------------
 num_rep <- 100
 taus <- c(0, .25, .5, .75, 1)
-ks <- 8:16 # (n = 2^k)
+ks <- 8:18 # (n = 2^k)
 ps <- seq(2,10,2) # dimensions considered
 ps_sub <- ps[c(1,length(ps))] # dimensions considered for bf alg.
 
@@ -28,7 +30,7 @@ cat("Number of row in sim_grid: ", nrow(sim_grid), "\n")
 
 ns <- 2^ks
 
-for(x in seq_along(ks)[length(ks)]){
+for(x in seq_along(ks)){
   times <- mclapply(which(sim_grid$k == ks[x]), \(s){
     
     cat(".\n")
@@ -47,23 +49,19 @@ for(x in seq_along(ks)[length(ks)]){
     time_knight_e <- system.time(replicate(100, taujack_ms(X[,1:2])))[[3]]/100
     
     # still fast, but much less so (unless tau=1)
-    time_dac <- numeric(length(ps))
-    for(r in seq_along(ps)){
-      K <- ifelse(tau == 1 | k <= 12, 50, 5)
-      time_dac[r] <- system.time(replicate(K, taujack_dac(X[,1:ps[r]], thresh=25L)))[[3]]/K
+    time_dac <- as.numeric(rep(NA,length(ps)))
+    K <- ifelse(tau == 1 | k <= 12, 50, 5)
+    if(!(tau < 1 & k > 16)){
+      for(r in seq_along(ps))
+        time_dac[r] <- system.time(replicate(K, taujack_dac(X[,1:ps[r]], thresh=25L)))[[3]]/K
     }
     
     # not fast, unless n is small
     time_bf <- as.numeric(c(NA, NA))
+    K <- ifelse(k <= 12, 10, 1)
     if(k <= 16){
-      for(r in c(1,2)){
-        if(k <= 12){
-          K <- 10
-        }else{
-          K <- 1
-        }
+      for(r in c(1,2))
         time_bf[r] <- system.time(replicate(K, taujack_bf(X[,1:ps_sub[r]], seq = T)))[[3]]/K
-      }
     }
     
     dt <- data.table(rep_id=rep_id, n=n, tau=tau, rho=rho, p = c(2, 2, ps, ps_sub),
@@ -73,7 +71,7 @@ for(x in seq_along(ks)[length(ks)]){
                      time = c(time_knight_o, time_knight_e, time_dac, time_bf))
     
     return(dt)
-  }, mc.cores = 12) |> rbindlist()
+  }, mc.cores = 8) |> rbindlist()
   
   fwrite(times, paste0("benchmark/times", x, ".csv"))
 }
