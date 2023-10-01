@@ -79,6 +79,7 @@ gg <- ggplot(times0[p %in% c(2,4,6,10) & type == "median runtime" & tau %in% c(0
   guides(col = guide_legend(ncol=2), linetype = guide_legend(ncol=2)) +
   # guides(linetype = guide_legend(ncol=2)) +
   # guides(colour = "none") +
+  scale_x_continuous(breaks = seq(6,18,2)) +
   scale_y_continuous(breaks = seq(-14,2,4)) +
   xlab(expression(log[2]~n)) +
   ylab(expression(log[2](median~runtime))) +
