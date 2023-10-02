@@ -20,6 +20,7 @@ times0[grepl("KO", fun), fun := "KO"]
 times0[grepl("KE", fun), fun := "KE"]
 times0[grepl("DAC", fun), fun := "DAC"]
 
+times0[type == "median runtime", diff(log(time,2)), .(fun)]
 
 
 gg <- ggplot(times0[p %in% c(2,4,6,10) & type != "mean runtime"],
