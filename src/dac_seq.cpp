@@ -215,32 +215,32 @@ void divideAndConquer2(const std::vector<std::vector<int>>& X,
   // When skipping to a new dimension, need to ensure proper ordering
   if(need_sort){
     
-    // bool okay0 = true;
-    // bool okay1 = true;
-    // 
-    // for(int i=l0; i<r0-1; i++){
-    //   if(X[ids[i]][k0] > X[ids[i+1]][k0]){
-    //     okay0 = false;
-    //     break;
-    //   }
-    // }
-    // for(int i=l1; i<r1-1; i++){
-    //   if(X[ids[i]][k0] > X[ids[i+1]][k0]){
-    //     okay1 = false;
-    //     break;
-    //   }
-    // }
-    // 
-    // if(!okay0){
+    bool okay0 = true;
+    bool okay1 = true;
+
+    for(int i=l0; i<r0-1; i++){
+      if(X[ids[i]][k0] > X[ids[i+1]][k0]){
+        okay0 = false;
+        break;
+      }
+    }
+    for(int i=l1; i<r1-1; i++){
+      if(X[ids[i]][k0] > X[ids[i+1]][k0]){
+        okay1 = false;
+        break;
+      }
+    }
+
+    if(!okay0){
       std::sort(ids.begin() + l0, ids.begin() + r0, [&](int i, int j) {
         return X[i][k0] < X[j][k0];
       });
-    // }
-    // if(!okay1){
+    }
+    if(!okay1){
       std::sort(ids.begin() + l1, ids.begin() + r1, [&](int i, int j) {
         return X[i][k0] < X[j][k0];
       });
-    // }
+    }
   }  
   
   // if appropriate perform merge phase of merge sort
@@ -358,7 +358,7 @@ std::vector<std::vector<int>> columnRanks(const std::vector<std::vector<double>>
 // Rcpp wrapper function
 // This function takes an R numeric matrix X, computes the discordance matrix, and returns an integer matrix.
 // [[Rcpp::export]]
-IntegerMatrix dac_seqq(NumericMatrix X, int thresh = 25, bool brute_force = false) {
+IntegerMatrix dac_seq(NumericMatrix X, int thresh = 25, bool brute_force = false) {
   int n = X.nrow();
   int d = X.ncol();
   
