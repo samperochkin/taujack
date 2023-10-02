@@ -19,7 +19,7 @@ source("functions.R")       # wrappers (performs re-ordering if necessary)
 # Benchmark ---------------------------------------------------------------
 num_rep <- 100
 taus <- c(0, .25, .5, .75, 1)
-ks <- 8:18 # (n = 2^k)
+ks <- 8:19 # (n = 2^k)
 ps <- seq(2,10,2) # dimensions considered
 ps_sub <- ps[c(1,length(ps))] # dimensions considered for bf alg.
 
@@ -29,8 +29,8 @@ sim_grid$rho <- sin(sim_grid$tau*pi/2)
 cat("Number of row in sim_grid: ", nrow(sim_grid), "\n")
 
 ns <- 2^ks
-x <- 10
-s <- which(sim_grid$k == ks[x])[401]
+x <- 6
+s <- which(sim_grid$k == ks[x])[1]
 # times <- lapply(which(sim_grid$k == ks[x])[-(1:400)], \(s){
   
   cat(s, "\n")
@@ -45,8 +45,8 @@ s <- which(sim_grid$k == ks[x])[401]
   X <- rnorm(n, 0, sqrt(rho)) + matrix(rnorm(n*10, 0, sqrt(1-rho)), n, 10)
   
   # very fast, needs many replications to get a good estimate
-  # time_knight_o <- system.time(replicate(100, cor.fk(X[,1:2])))[[3]]/100
-  # time_knight_e <- system.time(replicate(100, taujack_ms(X[,1:2])))[[3]]/100
+  time_knight_o <- system.time(replicate(20, cor.fk(X[,1:2])))[[3]]/20
+  time_knight_e <- system.time(replicate(10, taujack_ms(X[,1:2])))[[3]]/10
   
   # still fast, but much less so (unless tau=1)
   time_dac <- as.numeric(rep(NA,length(ps)))
@@ -55,7 +55,7 @@ s <- which(sim_grid$k == ks[x])[401]
   # if(!(tau < 1 & k > 16)){
   #   for(r in seq_along(ps))
         taujack_dac(X[,1:ps[r]], thresh=25L)
-        # time_dac[r] <- system.time(replicate(K, taujack_dac(X[,1:ps[r]], thresh=25L)))[[3]]/K
+        time_dac[r] <- system.time(replicate(K, taujack_dac(X[,1:ps[r]], thresh=25L)))[[3]]/K
   # }
   
   # not fast, unless n is small
