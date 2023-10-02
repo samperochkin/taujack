@@ -1,8 +1,8 @@
 #include <Rcpp.h>
 #include <vector>
+// #include <unistd.h>
 #include <algorithm>  // For sorting
-// #include <limits>
-// #include <thread>  // for std::this_thread::sleep_for
+#include <thread>  // for std::this_thread::sleep_for
 
 using namespace Rcpp;
 
@@ -86,11 +86,11 @@ void merge(const std::vector<std::vector<int>>& X,
 
 
 void merge2(const std::vector<std::vector<int>>& X,
-           std::vector<std::vector<int>>& D,
-           const std::vector<int>& ids,
-           const int l0, const int r0,
-           const int l1, const int r1,
-           const int k0) {
+            std::vector<std::vector<int>>& D,
+            const std::vector<int>& ids,
+            const int l0, const int r0,
+            const int l1, const int r1,
+            const int k0) {
   
   int n0 = r0-l0;
   int n1 = r1-l1;
@@ -122,10 +122,8 @@ std::pair<int, int> findSplit(const std::vector<std::vector<int>>& X,
   int count1 = 0;
   int split0;
   int split1;
-  long long num_side_to_side = n0;
-  num_side_to_side = num_side_to_side * n1;
-  long long temp_nss;
-  
+  int num_side_to_side = n0*n1; // to minimize
+  int temp_nss;
   
   while (count0 < n0 && count1 < n1) {
     if (X[ids[l0+count0]][k0] < X[ids[l1+count1]][k0]) {
@@ -147,7 +145,7 @@ std::pair<int, int> findSplit(const std::vector<std::vector<int>>& X,
 
 std::pair<int, int> findSplitSort(const std::vector<std::vector<int>>& X,
                                   const std::vector<int>& ids,
-                                  std::vector<int>& idss,
+                                  std::vector<int>& ids_copy,
                                   const int l0, const int r0,
                                   const int l1, const int r1,
                                   const int k0) {
@@ -158,19 +156,19 @@ std::pair<int, int> findSplitSort(const std::vector<std::vector<int>>& X,
   int count1 = 0;
   int split0;
   int split1;
-  long long num_side_to_side = n0;
-  num_side_to_side = num_side_to_side * n1;
-  long long temp_nss;
+  int num_side_to_side = n0*n1; // to minimize
+  int temp_nss;
+  
+  std::vector<int> ids_sorted(n0+n1);
   
   while (count0 < n0 && count1 < n1) {
     if (X[ids[l0+count0]][k0] < X[ids[l1+count1]][k0]) {
-      idss[l0+count0+count1] = ids[l0+count0];
+      ids_sorted[count0+count1] = ids[l0+count0];
       count0 ++;
     } else {
-      idss[l0+count0+count1] = ids[l1+count1];
+      ids_sorted[count0+count1] = ids[l1+count1];
       count1 ++;
     }
-    
     temp_nss = count0 * count1 + (n0 - count0) * (n1 - count1);
     if (temp_nss <= num_side_to_side) {
       num_side_to_side = temp_nss;
@@ -179,9 +177,10 @@ std::pair<int, int> findSplitSort(const std::vector<std::vector<int>>& X,
     }
   }
   
-  for(int i=count0; i<n0; i++) idss[l0+n1+i] = ids[l0+i];
-  for(int i=count1; i<n1; i++) idss[l0+n0+i] = ids[l1+i];
-
+  for(int i=count0; i<n0; i++) ids_sorted[n1+i] = ids[l0+i];
+  for(int i=count1; i<n1; i++) ids_sorted[n0+i] = ids[l1+i];
+  for(int i=0; i<n0+n1; i++) ids_copy[i] = ids_sorted[i];
+  
   return std::make_pair(split0, split1);
 }
 
@@ -206,6 +205,9 @@ void divideAndConquer2(const std::vector<std::vector<int>>& X,
   int d = X[0].size();
   if(k0 == d) return; // end of recursion - concordant sets
   
+  // k0 = d means that the given pairs are concordant
+  if(k0 == d) return;
+  
   double sqrt_nn = std::sqrt(n0)*std::sqrt(n1);
   if(sqrt_nn <= thresh || n0 < 3 || n1 < 3) {
     conquer2(X, D, ids, l0, r0, l1, r1, k0);
@@ -214,41 +216,24 @@ void divideAndConquer2(const std::vector<std::vector<int>>& X,
   
   // When skipping to a new dimension, need to ensure proper ordering
   if(need_sort){
-    
-    // bool okay0 = true;
-    // bool okay1 = true;
-    // 
-    // for(int i=l0; i<r0-1; i++){
-    //   if(X[ids[i]][k0] > X[ids[i+1]][k0]){
-    //     okay0 = false;
-    //     break;
-    //   }
-    // }
-    // for(int i=l1; i<r1-1; i++){
-    //   if(X[ids[i]][k0] > X[ids[i+1]][k0]){
-    //     okay1 = false;
-    //     break;
-    //   }
-    // }
-    // 
-    // if(!okay0){
-      std::sort(ids.begin() + l0, ids.begin() + r0, [&](int i, int j) {
-        return X[i][k0] < X[j][k0];
-      });
-    // }
-    // if(!okay1){
-      std::sort(ids.begin() + l1, ids.begin() + r1, [&](int i, int j) {
-        return X[i][k0] < X[j][k0];
-      });
-    // }
+    std::sort(ids.begin() + l0, ids.begin() + r0, [&](int i, int j) {
+      return X[i][k0] < X[j][k0];
+    });
+    std::sort(ids.begin() + l1, ids.begin() + r1, [&](int i, int j) {
+      return X[i][k0] < X[j][k0];
+    });
   }  
   
   // if appropriate perform merge phase of merge sort
   if(k0+1 == d){
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));  // pause for 1 second
+    Rcpp::Rcout << "Got there\n";
+    
     merge2(X, D, ids, l0, r0, l1, r1, k0);
     return;
   }
-
+  
   // find split value
   std::pair<int, int> splitIndices = findSplit(X, ids, l0, r0, l1, r1, k0);
   int split0 = splitIndices.first;
@@ -272,7 +257,6 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
                       std::vector<std::vector<int>>& D,
                       const int thresh,
                       std::vector<int>& ids,
-                      std::vector<int>& idss,
                       const int l, const int r,
                       const int k0) {
   
@@ -290,17 +274,20 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
   
   // divide -----------------------------------------------
   int mid = l + n/2;
-  divideAndConquer(X, D, thresh, ids, idss, l, mid, k0);
-  divideAndConquer(X, D, thresh, ids, idss, mid, r, k0);
+  divideAndConquer(X, D, thresh, ids, l, mid, k0);
+  divideAndConquer(X, D, thresh, ids, mid, r, k0);
   
   // merge/conquer ----------------------------------------
   if(k0+1 == d){
     merge(X, D, ids, l, mid, r, k0);
     return;
   }
-
-  // std::vector<int> ids_sorted(ids.begin()+l, ids.begin()+r);
-  std::pair<int, int> splitIndices = findSplitSort(X, ids, idss, l, mid, mid, r, k0);
+  
+  // std::this_thread::sleep_for(std::chrono::seconds(1));  // pause for 1 second
+  // Rcpp::Rcout << "Got there\n";
+  
+  std::vector<int> ids_sorted(ids.begin()+l, ids.begin()+r);
+  std::pair<int, int> splitIndices = findSplitSort(X, ids, ids_sorted, l, mid, mid, r, k0);
   int split0 = splitIndices.first;
   int split1 = splitIndices.second;
   
@@ -313,11 +300,14 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
   
   // can move on to next dimension
   if(k0+1 < d){
+    // std::this_thread::sleep_for(std::chrono::milliseconds(50));  // pause for 1 second
+    // Rcpp::Rcout << "Got there\n";
+    
     divideAndConquer2(X, D, thresh, ids, l, l+split0, mid+split1, r, k0+1, true);
   }
   
   // enforce ordering on k0
-  for(int i=0; i<r-l; i++) ids[l+i] = idss[l+i];
+  for(int i=0; i<r-l; i++) ids[l+i] = ids_sorted[i];
 }
 
 
@@ -358,7 +348,7 @@ std::vector<std::vector<int>> columnRanks(const std::vector<std::vector<double>>
 // Rcpp wrapper function
 // This function takes an R numeric matrix X, computes the discordance matrix, and returns an integer matrix.
 // [[Rcpp::export]]
-IntegerMatrix dac_seqq(NumericMatrix X, int thresh = 25, bool brute_force = false) {
+IntegerMatrix dac_seq(NumericMatrix X, int thresh = 25, bool brute_force = false) {
   int n = X.nrow();
   int d = X.ncol();
   
@@ -374,12 +364,11 @@ IntegerMatrix dac_seqq(NumericMatrix X, int thresh = 25, bool brute_force = fals
   
   std::vector<int> ids(n);
   for(int i=0; i<n; i++) ids[U[i][0]] = i;
-  std::vector<int> idss = ids;
   
   if(brute_force){
     conquer(U, D, ids, 0, n, 1);
   }else{
-    divideAndConquer(U, D, thresh, ids, idss, 0, n, 1);
+    divideAndConquer(U, D, thresh, ids, 0, n, 1);
   }
   
   // Convert D to Rcpp::IntegerMatrix and return it

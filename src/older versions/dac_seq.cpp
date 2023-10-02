@@ -85,11 +85,11 @@ void merge(const std::vector<std::vector<int>>& X,
 
 
 void merge2(const std::vector<std::vector<int>>& X,
-            std::vector<std::vector<int>>& D,
-            const std::vector<int>& ids,
-            const int l0, const int r0,
-            const int l1, const int r1,
-            const int k0) {
+           std::vector<std::vector<int>>& D,
+           const std::vector<int>& ids,
+           const int l0, const int r0,
+           const int l1, const int r1,
+           const int k0) {
   
   int n0 = r0-l0;
   int n1 = r1-l1;
@@ -228,7 +228,7 @@ void divideAndConquer2(const std::vector<std::vector<int>>& X,
     merge2(X, D, ids, l0, r0, l1, r1, k0);
     return;
   }
-  
+
   // find split value
   std::pair<int, int> splitIndices = findSplit(X, ids, l0, r0, l1, r1, k0);
   int split0 = splitIndices.first;
@@ -277,10 +277,7 @@ void divideAndConquer(const std::vector<std::vector<int>>& X,
     merge(X, D, ids, l, mid, r, k0);
     return;
   }
-  
-  sleep(1);  // pause for 1 second
-  Rcpp::Rcout << "Got there\n";
-  
+
   std::vector<int> ids_sorted(ids.begin()+l, ids.begin()+r);
   std::pair<int, int> splitIndices = findSplitSort(X, ids, ids_sorted, l, mid, mid, r, k0);
   int split0 = splitIndices.first;
