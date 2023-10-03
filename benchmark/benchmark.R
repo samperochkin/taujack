@@ -12,16 +12,16 @@ library(microbenchmark, lib.loc = "~/R/x86_64-pc-linux-gnu-library/4.3/")
 # functions to benchmark
 library(pcaPP) # cor.fk
 sourceCpp("src/ms.cpp")   # for Knight's extended alg.
-sourceCpp("src/dac_seq.cpp")  # divide-and-conquer alg.
+sourceCpp("src/dac_seqq.cpp")  # divide-and-conquer alg.
 sourceCpp("src/bf.cpp")   # brute force alg.
 source("functions.R")       # wrappers (performs re-ordering if necessary)
 
 
 # Benchmark ---------------------------------------------------------------
-num_rep <- 200
+num_rep <- 100
 taus <- c(0, .25, .5, .75, 1)
-ks <- 7:18 # (n = 2^k)
-ps <- seq(2,10,2) # dimensions considered
+ks <- 7:21 # (n = 2^k)
+ps <- c(2,4,6,10) # dimensions considered
 ps_sub <- ps[c(1,length(ps))] # dimensions considered for bf alg.
 
 sim_grid <- expand.grid(rep_id = 1:num_rep, tau = taus, k = ks)
@@ -47,7 +47,6 @@ for(x in seq_along(ks)){
     X <- (rnorm(n, 0, sqrt(rho)) + matrix(rnorm(n*10, 0, sqrt(1-rho)), n, 10))
     
     # very fast, needs many replications to get a good estimate
-    
     K <- 100
     meds <- summary(microbenchmark(
       "knight_o" = cor.fk(X[,1:2]),
@@ -59,7 +58,6 @@ for(x in seq_along(ks)){
     
     # still fast, but much less so (unless tau=1)
     time_dac <- as.numeric(rep(NA,length(ps)))
-    K <- ifelse(tau == 1 | k <= 12, 50, 5)
     for(r in seq_along(ps)){
       
       if(tau < 1 & k > 16 & ps[r] > 2) next
@@ -87,7 +85,7 @@ for(x in seq_along(ks)){
                      time = c(time_knight_o, time_knight_e, time_dac, time_bf))
     
     return(dt)
-  }, mc.cores = 10) |> rbindlist()
+  }, mc.cores = 12) |> rbindlist()
   
   fwrite(times, paste0("benchmark/times", x, ".csv"))
 }

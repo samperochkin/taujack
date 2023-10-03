@@ -81,6 +81,42 @@ taujack_dac <- function(X, thresh = 25L, brute_force = F, K_serial = 0, returnC 
               Zh = Zh))
 }
 
+
+taujack_dacc <- function(X, thresh = 25L, brute_force = F, K_serial = 0, returnC = F){
+  
+  if(brute_force){
+    C <- bruteForce(X, seq = T)
+  }else{
+    # X <- apply(X, 2, rank)
+    C <- dac_seqq(X, thresh = thresh, brute_force = F)
+  }
+  
+  if(returnC) return(C)
+  
+  n <- nrow(X)
+  d <- ncol(X)
+  dd <- d-1
+  
+  gs <- t((2^(1:dd)*t(C)/(n-1) - 1)/(2^(1:dd) - 1))
+  Zh <- sapply(0:K_serial, \(k){
+    (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+  }, simplify = "array")
+  if(dd == 1) Zh <- array(Zh, c(1,1,K_serial+1))
+  
+  if(K_serial == 0){
+    return(list(Th = colMeans(gs),
+                Sh = 4*Zh[,,1]))
+  }
+  
+  Zh[,,-1] <- Zh[,,-1] + aperm(Zh[,,-1], c(2,1,3))
+  Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
+  
+  return(list(Th = colMeans(gs),
+              Sh = 4*(Zh[,,1] + Zsum),
+              Zh = Zh))
+}
+
+
 # brute force algorithm
 taujack_bf <- function(X, seq = F, K_serial = 0, returnC = F){
   C <- bruteForce(X, seq = seq)
