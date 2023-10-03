@@ -1,101 +1,41 @@
 rep_id,n,tau,rho,p,fun,time
-1,65536,1,1,2,"Knight (original, KO)",0.007617596
-1,65536,1,1,2,"Knight (extended, KE)",0.0152326455
-1,65536,1,1,2,divide-and-conquer (DAC),0.078859815
-1,65536,1,1,2,"Knight (original, KO)",0.007617596
-2,65536,1,1,2,"Knight (original, KO)",0.007467627
-2,65536,1,1,2,"Knight (extended, KE)",0.015355777
-2,65536,1,1,2,divide-and-conquer (DAC),0.07888378
-2,65536,1,1,2,"Knight (original, KO)",0.007467627
-3,65536,1,1,2,"Knight (original, KO)",0.007456936
-3,65536,1,1,2,"Knight (extended, KE)",0.015184927
-3,65536,1,1,2,divide-and-conquer (DAC),0.079752447
-3,65536,1,1,2,"Knight (original, KO)",0.007456936
-4,65536,1,1,2,"Knight (original, KO)",0.0076011405
-4,65536,1,1,2,"Knight (extended, KE)",0.0153422525
-4,65536,1,1,2,divide-and-conquer (DAC),0.074457942
-4,65536,1,1,2,"Knight (original, KO)",0.0076011405
-5,65536,1,1,2,"Knight (original, KO)",0.0044800355
-5,65536,1,1,2,"Knight (extended, KE)",0.0092451735
-5,65536,1,1,2,divide-and-conquer (DAC),0.0460305135
-5,65536,1,1,2,"Knight (original, KO)",0.0044800355
-6,65536,1,1,2,"Knight (original, KO)",0.0076129135
-6,65536,1,1,2,"Knight (extended, KE)",0.0151900125
-6,65536,1,1,2,divide-and-conquer (DAC),0.077898684
-6,65536,1,1,2,"Knight (original, KO)",0.0076129135
-7,65536,1,1,2,"Knight (original, KO)",0.0076086605
-7,65536,1,1,2,"Knight (extended, KE)",0.015457423
-7,65536,1,1,2,divide-and-conquer (DAC),0.077004107
-7,65536,1,1,2,"Knight (original, KO)",0.0076086605
-8,65536,1,1,2,"Knight (original, KO)",0.004486919
-8,65536,1,1,2,"Knight (extended, KE)",0.009217763
-8,65536,1,1,2,divide-and-conquer (DAC),0.045219274
-8,65536,1,1,2,"Knight (original, KO)",0.004486919
-9,65536,1,1,2,"Knight (original, KO)",0.007574014
-9,65536,1,1,2,"Knight (extended, KE)",0.0154967515
-9,65536,1,1,2,divide-and-conquer (DAC),0.0774915835
-9,65536,1,1,2,"Knight (original, KO)",0.007574014
-10,65536,1,1,2,"Knight (original, KO)",0.007525997
-10,65536,1,1,2,"Knight (extended, KE)",0.0152341025
-10,65536,1,1,2,divide-and-conquer (DAC),0.073810525
-10,65536,1,1,2,"Knight (original, KO)",0.007525997
-11,65536,1,1,2,"Knight (original, KO)",0.0075106115
-11,65536,1,1,2,"Knight (extended, KE)",0.0152093715
-11,65536,1,1,2,divide-and-conquer (DAC),0.079693842
-11,65536,1,1,2,"Knight (original, KO)",0.0075106115
-12,65536,1,1,2,"Knight (original, KO)",0.0074304955
-12,65536,1,1,2,"Knight (extended, KE)",0.015167028
-12,65536,1,1,2,divide-and-conquer (DAC),0.079049168
-12,65536,1,1,2,"Knight (original, KO)",0.0074304955
-13,65536,1,1,2,"Knight (original, KO)",0.0075374575
-13,65536,1,1,2,"Knight (extended, KE)",0.0153155435
-13,65536,1,1,2,divide-and-conquer (DAC),0.078961352
-13,65536,1,1,2,"Knight (original, KO)",0.0075374575
-14,65536,1,1,2,"Knight (original, KO)",0.0075512885
-14,65536,1,1,2,"Knight (extended, KE)",0.0153046885
-14,65536,1,1,2,divide-and-conquer (DAC),0.077810845
-14,65536,1,1,2,"Knight (original, KO)",0.0075512885
-15,65536,1,1,2,"Knight (original, KO)",0.0043506885
-15,65536,1,1,2,"Knight (extended, KE)",0.0090244895
-15,65536,1,1,2,divide-and-conquer (DAC),0.0431832035
-15,65536,1,1,2,"Knight (original, KO)",0.0043506885
-16,65536,1,1,2,"Knight (original, KO)",0.004334828
-16,65536,1,1,2,"Knight (extended, KE)",0.008949864
-16,65536,1,1,2,divide-and-conquer (DAC),0.043095514
-16,65536,1,1,2,"Knight (original, KO)",0.004334828
-17,65536,1,1,2,"Knight (original, KO)",0.007298408
-17,65536,1,1,2,"Knight (extended, KE)",0.014318032
-17,65536,1,1,2,divide-and-conquer (DAC),0.0431400035
-17,65536,1,1,2,"Knight (original, KO)",0.007298408
-18,65536,1,1,2,"Knight (original, KO)",0.0074063735
-18,65536,1,1,2,"Knight (extended, KE)",0.0150806105
-18,65536,1,1,2,divide-and-conquer (DAC),0.040991042
-18,65536,1,1,2,"Knight (original, KO)",0.0074063735
-19,65536,1,1,2,"Knight (original, KO)",0.004396743
-19,65536,1,1,2,"Knight (extended, KE)",0.009077474
-19,65536,1,1,2,divide-and-conquer (DAC),0.044715589
-19,65536,1,1,2,"Knight (original, KO)",0.004396743
-20,65536,1,1,2,"Knight (original, KO)",0.004350153
-20,65536,1,1,2,"Knight (extended, KE)",0.009011176
-20,65536,1,1,2,divide-and-conquer (DAC),0.0433194025
-20,65536,1,1,2,"Knight (original, KO)",0.004350153
-21,65536,1,1,2,"Knight (original, KO)",0.0073046925
-21,65536,1,1,2,"Knight (extended, KE)",0.014702104
-21,65536,1,1,2,divide-and-conquer (DAC),0.042697538
-21,65536,1,1,2,"Knight (original, KO)",0.0073046925
-22,65536,1,1,2,"Knight (original, KO)",0.0045263495
-22,65536,1,1,2,"Knight (extended, KE)",0.009444694
-22,65536,1,1,2,divide-and-conquer (DAC),0.0448874065
-22,65536,1,1,2,"Knight (original, KO)",0.0045263495
-23,65536,1,1,2,"Knight (original, KO)",0.0072694255
-23,65536,1,1,2,"Knight (extended, KE)",0.01485258
-23,65536,1,1,2,divide-and-conquer (DAC),0.04322901
-23,65536,1,1,2,"Knight (original, KO)",0.0072694255
-24,65536,1,1,2,"Knight (original, KO)",0.00739701
-24,65536,1,1,2,"Knight (extended, KE)",0.015127265
-24,65536,1,1,2,divide-and-conquer (DAC),0.0413862315
-24,65536,1,1,2,"Knight (original, KO)",0.00739701
-25,65536,1,1,2,"Knight (original, KO)",0.007231825
-25,65536,1,1,2,"Knight (extended, KE)",0.0145381135
-25,65536,1,1,2,divide-and-conquer (DAC),0.042850185
-25,65536,1,1,2,"Knight (original, KO)",0.007231825
+1,65536,1,1,2,"Knight (original, KO)",0.004399729
+1,65536,1,1,2,"Knight (extended, KE)",0.0108732405
+1,65536,1,1,2,divide-and-conquer (DAC),0.047510964
+1,65536,1,1,2,"Knight (original, KO)",0.004399729
+2,65536,1,1,2,"Knight (original, KO)",0.0043478075
+2,65536,1,1,2,"Knight (extended, KE)",0.0089791195
+2,65536,1,1,2,divide-and-conquer (DAC),0.044494971
+2,65536,1,1,2,"Knight (original, KO)",0.0043478075
+3,65536,1,1,2,"Knight (original, KO)",0.004323981
+3,65536,1,1,2,"Knight (extended, KE)",0.008949943
+3,65536,1,1,2,divide-and-conquer (DAC),0.0441527295
+3,65536,1,1,2,"Knight (original, KO)",0.004323981
+4,65536,1,1,2,"Knight (original, KO)",0.007335233
+4,65536,1,1,2,"Knight (extended, KE)",0.0150789305
+4,65536,1,1,2,divide-and-conquer (DAC),0.0420202165
+4,65536,1,1,2,"Knight (original, KO)",0.007335233
+5,65536,1,1,2,"Knight (original, KO)",0.0073967465
+5,65536,1,1,2,"Knight (extended, KE)",0.015092555
+5,65536,1,1,2,divide-and-conquer (DAC),0.058967046
+5,65536,1,1,2,"Knight (original, KO)",0.0073967465
+6,65536,1,1,2,"Knight (original, KO)",0.004397016
+6,65536,1,1,2,"Knight (extended, KE)",0.0089482865
+6,65536,1,1,2,divide-and-conquer (DAC),0.043204049
+6,65536,1,1,2,"Knight (original, KO)",0.004397016
+7,65536,1,1,2,"Knight (original, KO)",0.004386451
+7,65536,1,1,2,"Knight (extended, KE)",0.008962304
+7,65536,1,1,2,divide-and-conquer (DAC),0.043876054
+7,65536,1,1,2,"Knight (original, KO)",0.004386451
+8,65536,1,1,2,"Knight (original, KO)",0.0043846755
+8,65536,1,1,2,"Knight (extended, KE)",0.0089978555
+8,65536,1,1,2,divide-and-conquer (DAC),0.043653899
+8,65536,1,1,2,"Knight (original, KO)",0.0043846755
+9,65536,1,1,2,"Knight (original, KO)",0.007403402
+9,65536,1,1,2,"Knight (extended, KE)",0.0150362525
+9,65536,1,1,2,divide-and-conquer (DAC),0.0530983035
+9,65536,1,1,2,"Knight (original, KO)",0.007403402
+10,65536,1,1,2,"Knight (original, KO)",0.007336194
+10,65536,1,1,2,"Knight (extended, KE)",0.0148748885
+10,65536,1,1,2,divide-and-conquer (DAC),0.0409446235
+10,65536,1,1,2,"Knight (original, KO)",0.007336194

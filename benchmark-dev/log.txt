@@ -39,16 +39,16 @@ Type 'q()' to quit R.
 > 
 > 
 > # Benchmark ---------------------------------------------------------------
-> num_rep <- 25
+> num_rep <- 10
 > taus <- c(1)
-> ks <- 12:19 # (n = 2^k)
+> ks <- 12:20 # (n = 2^k)
 > ps <- c(2) # dimensions considered
 > 
 > sim_grid <- expand.grid(rep_id = 1:num_rep, tau = taus, k = ks)
 > sim_grid$n <- 2^sim_grid$k
 > sim_grid$rho <- sin(sim_grid$tau*pi/2)
 > cat("Number of row in sim_grid: ", nrow(sim_grid), "\n")
-Number of row in sim_grid:  200 
+Number of row in sim_grid:  90 
 > ns <- 2^ks
 > 
 > for(x in seq_along(ks)){
@@ -63,12 +63,12 @@ Number of row in sim_grid:  200
 +     tau <- sim_grid[s,]$tau
 +     rho <- sim_grid[s,]$rho
 +     
-+     # set.seed(666*s)
++     set.seed(666*s)
 +     X <- (rnorm(n, 0, sqrt(rho)) + matrix(rnorm(n*10, 0, sqrt(1-rho)), n, 10))
 +     
 +     # very fast, needs many replications to get a good estimate
 +     
-+     K <- 100
++     K <- 20
 +     meds <- summary(microbenchmark(
 +       "knight_o" = cor.fk(X[,1:2]),
 +       "knight_e" = taujack_ms(X[,1:2]),
@@ -79,12 +79,11 @@ Number of row in sim_grid:  200
 +     
 +     # still fast, but much less so (unless tau=1)
 +     time_dac <- as.numeric(rep(NA,length(ps)))
-+     K <- ifelse(tau == 1 | k <= 12, 50, 5)
 +     for(r in seq_along(ps)){
 +       
 +       if(tau < 1 & k > 16 & ps[r] > 2) next
 +       
-+       K <- ifelse(tau == 1 | ps[r] == 2, 50, 10)
++       K <- ifelse(tau == 1 | ps[r] == 2, 20, 10)
 +       time_dac[r] <- summary(microbenchmark(
 +         "dac" = taujack_dac(X[,1:ps[r]], thresh=10L),
 +         times = K, unit = "seconds"))$median
@@ -111,37 +110,7 @@ Number of row in sim_grid:  200
 .
 .
 .
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
 ------------------------- k= 13 
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
 .
 .
 .
@@ -163,37 +132,7 @@ Number of row in sim_grid:  200
 .
 .
 .
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
 ------------------------- k= 15 
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
 .
 .
 .
@@ -215,37 +154,7 @@ Number of row in sim_grid:  200
 .
 .
 .
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
 ------------------------- k= 17 
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
 .
 .
 .
@@ -267,21 +176,6 @@ Number of row in sim_grid:  200
 .
 .
 .
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
 ------------------------- k= 19 
 .
 .
@@ -293,7 +187,18 @@ Number of row in sim_grid:  200
 .
 .
 .
+------------------------- k= 20 
 .
 .
 .
 .
+.
+.
+.
+.
+.
+.
+> 
+> proc.time()
+   user  system elapsed 
+859.794  14.600 109.188 

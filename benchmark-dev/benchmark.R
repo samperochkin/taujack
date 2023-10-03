@@ -18,9 +18,9 @@ source("functions.R")       # wrappers (performs re-ordering if necessary)
 
 
 # Benchmark ---------------------------------------------------------------
-num_rep <- 25
+num_rep <- 10
 taus <- c(1)
-ks <- 12:19 # (n = 2^k)
+ks <- 12:20 # (n = 2^k)
 ps <- c(2) # dimensions considered
 
 sim_grid <- expand.grid(rep_id = 1:num_rep, tau = taus, k = ks)
@@ -41,12 +41,12 @@ for(x in seq_along(ks)){
     tau <- sim_grid[s,]$tau
     rho <- sim_grid[s,]$rho
     
-    # set.seed(666*s)
+    set.seed(666*s)
     X <- (rnorm(n, 0, sqrt(rho)) + matrix(rnorm(n*10, 0, sqrt(1-rho)), n, 10))
     
     # very fast, needs many replications to get a good estimate
     
-    K <- 100
+    K <- 20
     meds <- summary(microbenchmark(
       "knight_o" = cor.fk(X[,1:2]),
       "knight_e" = taujack_ms(X[,1:2]),
@@ -57,12 +57,11 @@ for(x in seq_along(ks)){
     
     # still fast, but much less so (unless tau=1)
     time_dac <- as.numeric(rep(NA,length(ps)))
-    K <- ifelse(tau == 1 | k <= 12, 50, 5)
     for(r in seq_along(ps)){
       
       if(tau < 1 & k > 16 & ps[r] > 2) next
       
-      K <- ifelse(tau == 1 | ps[r] == 2, 50, 10)
+      K <- ifelse(tau == 1 | ps[r] == 2, 20, 10)
       time_dac[r] <- summary(microbenchmark(
         "dac" = taujack_dac(X[,1:ps[r]], thresh=10L),
         times = K, unit = "seconds"))$median

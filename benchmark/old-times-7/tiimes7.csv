@@ -1,0 +1,601 @@
+rep_id,n,tau,rho,p,fun,time
+1,524288,1,1,2,"Knight (original, KO)",0.0928931175
+1,524288,1,1,2,"Knight (extended, KE)",0.1614882925
+1,524288,1,1,2,divide-and-conquer (DAC),1.0184291285
+1,524288,1,1,4,divide-and-conquer (DAC),2.2666158525
+1,524288,1,1,2,brute force (BF),
+1,524288,1,1,4,brute force (BF),
+2,524288,1,1,2,"Knight (original, KO)",0.0925809845
+2,524288,1,1,2,"Knight (extended, KE)",0.1632823635
+2,524288,1,1,2,divide-and-conquer (DAC),1.016148855
+2,524288,1,1,4,divide-and-conquer (DAC),2.221816168
+2,524288,1,1,2,brute force (BF),
+2,524288,1,1,4,brute force (BF),
+3,524288,1,1,2,"Knight (original, KO)",0.093660753
+3,524288,1,1,2,"Knight (extended, KE)",0.161582298
+3,524288,1,1,2,divide-and-conquer (DAC),1.0176025755
+3,524288,1,1,4,divide-and-conquer (DAC),2.2042721495
+3,524288,1,1,2,brute force (BF),
+3,524288,1,1,4,brute force (BF),
+4,524288,1,1,2,"Knight (original, KO)",0.0926295595
+4,524288,1,1,2,"Knight (extended, KE)",0.1627974665
+4,524288,1,1,2,divide-and-conquer (DAC),1.017382814
+4,524288,1,1,4,divide-and-conquer (DAC),1.8680639295
+4,524288,1,1,2,brute force (BF),
+4,524288,1,1,4,brute force (BF),
+5,524288,1,1,2,"Knight (original, KO)",0.0923198165
+5,524288,1,1,2,"Knight (extended, KE)",0.1613782495
+5,524288,1,1,2,divide-and-conquer (DAC),1.0186850605
+5,524288,1,1,4,divide-and-conquer (DAC),2.2610244255
+5,524288,1,1,2,brute force (BF),
+5,524288,1,1,4,brute force (BF),
+6,524288,1,1,2,"Knight (original, KO)",0.0936058305
+6,524288,1,1,2,"Knight (extended, KE)",0.161310875
+6,524288,1,1,2,divide-and-conquer (DAC),1.020775164
+6,524288,1,1,4,divide-and-conquer (DAC),2.2813202735
+6,524288,1,1,2,brute force (BF),
+6,524288,1,1,4,brute force (BF),
+7,524288,1,1,2,"Knight (original, KO)",0.0589553045
+7,524288,1,1,2,"Knight (extended, KE)",0.1062826585
+7,524288,1,1,2,divide-and-conquer (DAC),1.0142158975
+7,524288,1,1,4,divide-and-conquer (DAC),2.2557327895
+7,524288,1,1,2,brute force (BF),
+7,524288,1,1,4,brute force (BF),
+8,524288,1,1,2,"Knight (original, KO)",0.058412209
+8,524288,1,1,2,"Knight (extended, KE)",0.106560126
+8,524288,1,1,2,divide-and-conquer (DAC),0.848439558
+8,524288,1,1,4,divide-and-conquer (DAC),1.626631846
+8,524288,1,1,2,brute force (BF),
+8,524288,1,1,4,brute force (BF),
+9,524288,1,1,2,"Knight (original, KO)",0.091449092
+9,524288,1,1,2,"Knight (extended, KE)",0.161002684
+9,524288,1,1,2,divide-and-conquer (DAC),1.0205303385
+9,524288,1,1,4,divide-and-conquer (DAC),2.2820008905
+9,524288,1,1,2,brute force (BF),
+9,524288,1,1,4,brute force (BF),
+10,524288,1,1,2,"Knight (original, KO)",0.093556112
+10,524288,1,1,2,"Knight (extended, KE)",0.1634349845
+10,524288,1,1,2,divide-and-conquer (DAC),1.0237098155
+10,524288,1,1,4,divide-and-conquer (DAC),1.895056818
+10,524288,1,1,2,brute force (BF),
+10,524288,1,1,4,brute force (BF),
+11,524288,1,1,2,"Knight (original, KO)",0.091501238
+11,524288,1,1,2,"Knight (extended, KE)",0.1610121185
+11,524288,1,1,2,divide-and-conquer (DAC),1.0073539615
+11,524288,1,1,4,divide-and-conquer (DAC),2.2497854
+11,524288,1,1,2,brute force (BF),
+11,524288,1,1,4,brute force (BF),
+12,524288,1,1,2,"Knight (original, KO)",0.0924801225
+12,524288,1,1,2,"Knight (extended, KE)",0.161704795
+12,524288,1,1,2,divide-and-conquer (DAC),1.0177444215
+12,524288,1,1,4,divide-and-conquer (DAC),2.255118479
+12,524288,1,1,2,brute force (BF),
+12,524288,1,1,4,brute force (BF),
+13,524288,1,1,2,"Knight (original, KO)",0.0932046475
+13,524288,1,1,2,"Knight (extended, KE)",0.1606782705
+13,524288,1,1,2,divide-and-conquer (DAC),1.0201411565
+13,524288,1,1,4,divide-and-conquer (DAC),1.5321156965
+13,524288,1,1,2,brute force (BF),
+13,524288,1,1,4,brute force (BF),
+14,524288,1,1,2,"Knight (original, KO)",0.0937964105
+14,524288,1,1,2,"Knight (extended, KE)",0.16097409
+14,524288,1,1,2,divide-and-conquer (DAC),0.8321816615
+14,524288,1,1,4,divide-and-conquer (DAC),2.2245612115
+14,524288,1,1,2,brute force (BF),
+14,524288,1,1,4,brute force (BF),
+15,524288,1,1,2,"Knight (original, KO)",0.0770318245
+15,524288,1,1,2,"Knight (extended, KE)",0.1321154105
+15,524288,1,1,2,divide-and-conquer (DAC),1.043478341
+15,524288,1,1,4,divide-and-conquer (DAC),2.2329480205
+15,524288,1,1,2,brute force (BF),
+15,524288,1,1,4,brute force (BF),
+16,524288,1,1,2,"Knight (original, KO)",0.0840982675
+16,524288,1,1,2,"Knight (extended, KE)",0.147281973
+16,524288,1,1,2,divide-and-conquer (DAC),1.0202767885
+16,524288,1,1,4,divide-and-conquer (DAC),2.2404508615
+16,524288,1,1,2,brute force (BF),
+16,524288,1,1,4,brute force (BF),
+17,524288,1,1,2,"Knight (original, KO)",0.081128374
+17,524288,1,1,2,"Knight (extended, KE)",0.142461626
+17,524288,1,1,2,divide-and-conquer (DAC),1.021318401
+17,524288,1,1,4,divide-and-conquer (DAC),2.264786212
+17,524288,1,1,2,brute force (BF),
+17,524288,1,1,4,brute force (BF),
+18,524288,1,1,2,"Knight (original, KO)",0.055499081
+18,524288,1,1,2,"Knight (extended, KE)",0.128662517
+18,524288,1,1,2,divide-and-conquer (DAC),1.0232122875
+18,524288,1,1,4,divide-and-conquer (DAC),2.2478574495
+18,524288,1,1,2,brute force (BF),
+18,524288,1,1,4,brute force (BF),
+19,524288,1,1,2,"Knight (original, KO)",0.0834696555
+19,524288,1,1,2,"Knight (extended, KE)",0.1485452395
+19,524288,1,1,2,divide-and-conquer (DAC),1.019012322
+19,524288,1,1,4,divide-and-conquer (DAC),2.28923251
+19,524288,1,1,2,brute force (BF),
+19,524288,1,1,4,brute force (BF),
+20,524288,1,1,2,"Knight (original, KO)",0.0857957805
+20,524288,1,1,2,"Knight (extended, KE)",0.149799312
+20,524288,1,1,2,divide-and-conquer (DAC),1.033727702
+20,524288,1,1,4,divide-and-conquer (DAC),1.564578667
+20,524288,1,1,2,brute force (BF),
+20,524288,1,1,4,brute force (BF),
+21,524288,1,1,2,"Knight (original, KO)",0.0826866445
+21,524288,1,1,2,"Knight (extended, KE)",0.147352714
+21,524288,1,1,2,divide-and-conquer (DAC),1.018715993
+21,524288,1,1,4,divide-and-conquer (DAC),2.2784719795
+21,524288,1,1,2,brute force (BF),
+21,524288,1,1,4,brute force (BF),
+22,524288,1,1,2,"Knight (original, KO)",0.077717166
+22,524288,1,1,2,"Knight (extended, KE)",0.1332867345
+22,524288,1,1,2,divide-and-conquer (DAC),0.8862248185
+22,524288,1,1,4,divide-and-conquer (DAC),1.5263518145
+22,524288,1,1,2,brute force (BF),
+22,524288,1,1,4,brute force (BF),
+23,524288,1,1,2,"Knight (original, KO)",0.085888679
+23,524288,1,1,2,"Knight (extended, KE)",0.150245959
+23,524288,1,1,2,divide-and-conquer (DAC),1.030590011
+23,524288,1,1,4,divide-and-conquer (DAC),2.241822217
+23,524288,1,1,2,brute force (BF),
+23,524288,1,1,4,brute force (BF),
+24,524288,1,1,2,"Knight (original, KO)",0.0502971985
+24,524288,1,1,2,"Knight (extended, KE)",0.0947403275
+24,524288,1,1,2,divide-and-conquer (DAC),0.869501562
+24,524288,1,1,4,divide-and-conquer (DAC),2.2097871655
+24,524288,1,1,2,brute force (BF),
+24,524288,1,1,4,brute force (BF),
+25,524288,1,1,2,"Knight (original, KO)",0.0855582675
+25,524288,1,1,2,"Knight (extended, KE)",0.150404437
+25,524288,1,1,2,divide-and-conquer (DAC),1.016551269
+25,524288,1,1,4,divide-and-conquer (DAC),2.2850674215
+25,524288,1,1,2,brute force (BF),
+25,524288,1,1,4,brute force (BF),
+26,524288,1,1,2,"Knight (original, KO)",0.083502853
+26,524288,1,1,2,"Knight (extended, KE)",0.1491543075
+26,524288,1,1,2,divide-and-conquer (DAC),1.016372501
+26,524288,1,1,4,divide-and-conquer (DAC),2.2915031645
+26,524288,1,1,2,brute force (BF),
+26,524288,1,1,4,brute force (BF),
+27,524288,1,1,2,"Knight (original, KO)",0.0785609905
+27,524288,1,1,2,"Knight (extended, KE)",0.135500586
+27,524288,1,1,2,divide-and-conquer (DAC),1.0702180615
+27,524288,1,1,4,divide-and-conquer (DAC),1.6000064515
+27,524288,1,1,2,brute force (BF),
+27,524288,1,1,4,brute force (BF),
+28,524288,1,1,2,"Knight (original, KO)",0.0845630275
+28,524288,1,1,2,"Knight (extended, KE)",0.1482580395
+28,524288,1,1,2,divide-and-conquer (DAC),1.014098212
+28,524288,1,1,4,divide-and-conquer (DAC),2.264758859
+28,524288,1,1,2,brute force (BF),
+28,524288,1,1,4,brute force (BF),
+29,524288,1,1,2,"Knight (original, KO)",0.076304946
+29,524288,1,1,2,"Knight (extended, KE)",0.131253765
+29,524288,1,1,2,divide-and-conquer (DAC),1.0524889125
+29,524288,1,1,4,divide-and-conquer (DAC),2.261557467
+29,524288,1,1,2,brute force (BF),
+29,524288,1,1,4,brute force (BF),
+30,524288,1,1,2,"Knight (original, KO)",0.0499175595
+30,524288,1,1,2,"Knight (extended, KE)",0.0905910145
+30,524288,1,1,2,divide-and-conquer (DAC),1.015089263
+30,524288,1,1,4,divide-and-conquer (DAC),2.244786762
+30,524288,1,1,2,brute force (BF),
+30,524288,1,1,4,brute force (BF),
+31,524288,1,1,2,"Knight (original, KO)",0.0812019475
+31,524288,1,1,2,"Knight (extended, KE)",0.144163653
+31,524288,1,1,2,divide-and-conquer (DAC),1.0209229135
+31,524288,1,1,4,divide-and-conquer (DAC),2.2619329585
+31,524288,1,1,2,brute force (BF),
+31,524288,1,1,4,brute force (BF),
+32,524288,1,1,2,"Knight (original, KO)",0.0822065185
+32,524288,1,1,2,"Knight (extended, KE)",0.146153643
+32,524288,1,1,2,divide-and-conquer (DAC),1.023424292
+32,524288,1,1,4,divide-and-conquer (DAC),2.264172603
+32,524288,1,1,2,brute force (BF),
+32,524288,1,1,4,brute force (BF),
+33,524288,1,1,2,"Knight (original, KO)",0.0819343165
+33,524288,1,1,2,"Knight (extended, KE)",0.1471330795
+33,524288,1,1,2,divide-and-conquer (DAC),1.021243583
+33,524288,1,1,4,divide-and-conquer (DAC),2.2703264565
+33,524288,1,1,2,brute force (BF),
+33,524288,1,1,4,brute force (BF),
+34,524288,1,1,2,"Knight (original, KO)",0.0490556315
+34,524288,1,1,2,"Knight (extended, KE)",0.0923103245
+34,524288,1,1,2,divide-and-conquer (DAC),0.87267851
+34,524288,1,1,4,divide-and-conquer (DAC),1.534831617
+34,524288,1,1,2,brute force (BF),
+34,524288,1,1,4,brute force (BF),
+35,524288,1,1,2,"Knight (original, KO)",0.082783644
+35,524288,1,1,2,"Knight (extended, KE)",0.1463715795
+35,524288,1,1,2,divide-and-conquer (DAC),1.019314296
+35,524288,1,1,4,divide-and-conquer (DAC),2.246994945
+35,524288,1,1,2,brute force (BF),
+35,524288,1,1,4,brute force (BF),
+36,524288,1,1,2,"Knight (original, KO)",0.047734391
+36,524288,1,1,2,"Knight (extended, KE)",0.0918920785
+36,524288,1,1,2,divide-and-conquer (DAC),0.840752824
+36,524288,1,1,4,divide-and-conquer (DAC),2.200383078
+36,524288,1,1,2,brute force (BF),
+36,524288,1,1,4,brute force (BF),
+37,524288,1,1,2,"Knight (original, KO)",0.075840274
+37,524288,1,1,2,"Knight (extended, KE)",0.1297202665
+37,524288,1,1,2,divide-and-conquer (DAC),1.027269653
+37,524288,1,1,4,divide-and-conquer (DAC),2.242475076
+37,524288,1,1,2,brute force (BF),
+37,524288,1,1,4,brute force (BF),
+38,524288,1,1,2,"Knight (original, KO)",0.0774671935
+38,524288,1,1,2,"Knight (extended, KE)",0.1324889375
+38,524288,1,1,2,divide-and-conquer (DAC),1.1066329315
+38,524288,1,1,4,divide-and-conquer (DAC),2.2513598855
+38,524288,1,1,2,brute force (BF),
+38,524288,1,1,4,brute force (BF),
+39,524288,1,1,2,"Knight (original, KO)",0.084455785
+39,524288,1,1,2,"Knight (extended, KE)",0.1453668615
+39,524288,1,1,2,divide-and-conquer (DAC),1.020087669
+39,524288,1,1,4,divide-and-conquer (DAC),2.2696323295
+39,524288,1,1,2,brute force (BF),
+39,524288,1,1,4,brute force (BF),
+40,524288,1,1,2,"Knight (original, KO)",0.0832689825
+40,524288,1,1,2,"Knight (extended, KE)",0.1456247615
+40,524288,1,1,2,divide-and-conquer (DAC),1.0221852395
+40,524288,1,1,4,divide-and-conquer (DAC),2.2951518635
+40,524288,1,1,2,brute force (BF),
+40,524288,1,1,4,brute force (BF),
+41,524288,1,1,2,"Knight (original, KO)",0.0772987775
+41,524288,1,1,2,"Knight (extended, KE)",0.133145357
+41,524288,1,1,2,divide-and-conquer (DAC),1.0953459525
+41,524288,1,1,4,divide-and-conquer (DAC),1.5171050455
+41,524288,1,1,2,brute force (BF),
+41,524288,1,1,4,brute force (BF),
+42,524288,1,1,2,"Knight (original, KO)",0.0808323565
+42,524288,1,1,2,"Knight (extended, KE)",0.139364789
+42,524288,1,1,2,divide-and-conquer (DAC),1.0565127865
+42,524288,1,1,4,divide-and-conquer (DAC),2.1805858165
+42,524288,1,1,2,brute force (BF),
+42,524288,1,1,4,brute force (BF),
+43,524288,1,1,2,"Knight (original, KO)",0.076065069
+43,524288,1,1,2,"Knight (extended, KE)",0.131576739
+43,524288,1,1,2,divide-and-conquer (DAC),1.0543130865
+43,524288,1,1,4,divide-and-conquer (DAC),2.253458284
+43,524288,1,1,2,brute force (BF),
+43,524288,1,1,4,brute force (BF),
+44,524288,1,1,2,"Knight (original, KO)",0.077386194
+44,524288,1,1,2,"Knight (extended, KE)",0.1347535685
+44,524288,1,1,2,divide-and-conquer (DAC),0.855652359
+44,524288,1,1,4,divide-and-conquer (DAC),2.223049124
+44,524288,1,1,2,brute force (BF),
+44,524288,1,1,4,brute force (BF),
+45,524288,1,1,2,"Knight (original, KO)",0.081654306
+45,524288,1,1,2,"Knight (extended, KE)",0.14528113
+45,524288,1,1,2,divide-and-conquer (DAC),1.028657766
+45,524288,1,1,4,divide-and-conquer (DAC),2.218925509
+45,524288,1,1,2,brute force (BF),
+45,524288,1,1,4,brute force (BF),
+46,524288,1,1,2,"Knight (original, KO)",0.082830377
+46,524288,1,1,2,"Knight (extended, KE)",0.14629987
+46,524288,1,1,2,divide-and-conquer (DAC),1.0287386945
+46,524288,1,1,4,divide-and-conquer (DAC),2.220762878
+46,524288,1,1,2,brute force (BF),
+46,524288,1,1,4,brute force (BF),
+47,524288,1,1,2,"Knight (original, KO)",0.081228885
+47,524288,1,1,2,"Knight (extended, KE)",0.1448211745
+47,524288,1,1,2,divide-and-conquer (DAC),1.028942046
+47,524288,1,1,4,divide-and-conquer (DAC),1.5476521995
+47,524288,1,1,2,brute force (BF),
+47,524288,1,1,4,brute force (BF),
+48,524288,1,1,2,"Knight (original, KO)",0.048997844
+48,524288,1,1,2,"Knight (extended, KE)",0.092132681
+48,524288,1,1,2,divide-and-conquer (DAC),0.8389509815
+48,524288,1,1,4,divide-and-conquer (DAC),2.1285522925
+48,524288,1,1,2,brute force (BF),
+48,524288,1,1,4,brute force (BF),
+49,524288,1,1,2,"Knight (original, KO)",0.0830110005
+49,524288,1,1,2,"Knight (extended, KE)",0.1504348655
+49,524288,1,1,2,divide-and-conquer (DAC),1.027421929
+49,524288,1,1,4,divide-and-conquer (DAC),2.2997677335
+49,524288,1,1,2,brute force (BF),
+49,524288,1,1,4,brute force (BF),
+50,524288,1,1,2,"Knight (original, KO)",0.0768125165
+50,524288,1,1,2,"Knight (extended, KE)",0.131921232
+50,524288,1,1,2,divide-and-conquer (DAC),1.0484609605
+50,524288,1,1,4,divide-and-conquer (DAC),2.219915125
+50,524288,1,1,2,brute force (BF),
+50,524288,1,1,4,brute force (BF),
+51,524288,1,1,2,"Knight (original, KO)",0.078800231
+51,524288,1,1,2,"Knight (extended, KE)",0.1372074355
+51,524288,1,1,2,divide-and-conquer (DAC),1.061217255
+51,524288,1,1,4,divide-and-conquer (DAC),2.213772582
+51,524288,1,1,2,brute force (BF),
+51,524288,1,1,4,brute force (BF),
+52,524288,1,1,2,"Knight (original, KO)",0.07670452
+52,524288,1,1,2,"Knight (extended, KE)",0.1313873
+52,524288,1,1,2,divide-and-conquer (DAC),1.1176445025
+52,524288,1,1,4,divide-and-conquer (DAC),2.2323234065
+52,524288,1,1,2,brute force (BF),
+52,524288,1,1,4,brute force (BF),
+53,524288,1,1,2,"Knight (original, KO)",0.083626993
+53,524288,1,1,2,"Knight (extended, KE)",0.14694882
+53,524288,1,1,2,divide-and-conquer (DAC),1.0275691065
+53,524288,1,1,4,divide-and-conquer (DAC),2.236914373
+53,524288,1,1,2,brute force (BF),
+53,524288,1,1,4,brute force (BF),
+54,524288,1,1,2,"Knight (original, KO)",0.0839697915
+54,524288,1,1,2,"Knight (extended, KE)",0.1464745285
+54,524288,1,1,2,divide-and-conquer (DAC),1.0179306575
+54,524288,1,1,4,divide-and-conquer (DAC),1.5406706665
+54,524288,1,1,2,brute force (BF),
+54,524288,1,1,4,brute force (BF),
+55,524288,1,1,2,"Knight (original, KO)",0.0491748805
+55,524288,1,1,2,"Knight (extended, KE)",0.0916073025
+55,524288,1,1,2,divide-and-conquer (DAC),0.8330202115
+55,524288,1,1,4,divide-and-conquer (DAC),1.5739474095
+55,524288,1,1,2,brute force (BF),
+55,524288,1,1,4,brute force (BF),
+56,524288,1,1,2,"Knight (original, KO)",0.081821973
+56,524288,1,1,2,"Knight (extended, KE)",0.137981283
+56,524288,1,1,2,divide-and-conquer (DAC),1.0597783485
+56,524288,1,1,4,divide-and-conquer (DAC),2.2768697885
+56,524288,1,1,2,brute force (BF),
+56,524288,1,1,4,brute force (BF),
+57,524288,1,1,2,"Knight (original, KO)",0.0744636165
+57,524288,1,1,2,"Knight (extended, KE)",0.129150812
+57,524288,1,1,2,divide-and-conquer (DAC),1.0484209265
+57,524288,1,1,4,divide-and-conquer (DAC),2.282790982
+57,524288,1,1,2,brute force (BF),
+57,524288,1,1,4,brute force (BF),
+58,524288,1,1,2,"Knight (original, KO)",0.078461039
+58,524288,1,1,2,"Knight (extended, KE)",0.1341062375
+58,524288,1,1,2,divide-and-conquer (DAC),1.0816966335
+58,524288,1,1,4,divide-and-conquer (DAC),2.275897145
+58,524288,1,1,2,brute force (BF),
+58,524288,1,1,4,brute force (BF),
+59,524288,1,1,2,"Knight (original, KO)",0.0784887905
+59,524288,1,1,2,"Knight (extended, KE)",0.1407632785
+59,524288,1,1,2,divide-and-conquer (DAC),1.028494866
+59,524288,1,1,4,divide-and-conquer (DAC),2.180322926
+59,524288,1,1,2,brute force (BF),
+59,524288,1,1,4,brute force (BF),
+60,524288,1,1,2,"Knight (original, KO)",0.0754152585
+60,524288,1,1,2,"Knight (extended, KE)",0.12754451
+60,524288,1,1,2,divide-and-conquer (DAC),0.8532006925
+60,524288,1,1,4,divide-and-conquer (DAC),1.527443311
+60,524288,1,1,2,brute force (BF),
+60,524288,1,1,4,brute force (BF),
+61,524288,1,1,2,"Knight (original, KO)",0.048999486
+61,524288,1,1,2,"Knight (extended, KE)",0.092725802
+61,524288,1,1,2,divide-and-conquer (DAC),0.864296637
+61,524288,1,1,4,divide-and-conquer (DAC),2.274448707
+61,524288,1,1,2,brute force (BF),
+61,524288,1,1,4,brute force (BF),
+62,524288,1,1,2,"Knight (original, KO)",0.077829878
+62,524288,1,1,2,"Knight (extended, KE)",0.132501296
+62,524288,1,1,2,divide-and-conquer (DAC),1.0674731885
+62,524288,1,1,4,divide-and-conquer (DAC),2.245214764
+62,524288,1,1,2,brute force (BF),
+62,524288,1,1,4,brute force (BF),
+63,524288,1,1,2,"Knight (original, KO)",0.080534925
+63,524288,1,1,2,"Knight (extended, KE)",0.1363331705
+63,524288,1,1,2,divide-and-conquer (DAC),1.0257226845
+63,524288,1,1,4,divide-and-conquer (DAC),2.2573662325
+63,524288,1,1,2,brute force (BF),
+63,524288,1,1,4,brute force (BF),
+64,524288,1,1,2,"Knight (original, KO)",0.0762323075
+64,524288,1,1,2,"Knight (extended, KE)",0.1324839045
+64,524288,1,1,2,divide-and-conquer (DAC),1.06404379
+64,524288,1,1,4,divide-and-conquer (DAC),2.2314963415
+64,524288,1,1,2,brute force (BF),
+64,524288,1,1,4,brute force (BF),
+65,524288,1,1,2,"Knight (original, KO)",0.080127716
+65,524288,1,1,2,"Knight (extended, KE)",0.141817897
+65,524288,1,1,2,divide-and-conquer (DAC),1.065677973
+65,524288,1,1,4,divide-and-conquer (DAC),2.2461661515
+65,524288,1,1,2,brute force (BF),
+65,524288,1,1,4,brute force (BF),
+66,524288,1,1,2,"Knight (original, KO)",0.077852253
+66,524288,1,1,2,"Knight (extended, KE)",0.1341167185
+66,524288,1,1,2,divide-and-conquer (DAC),1.1027801065
+66,524288,1,1,4,divide-and-conquer (DAC),2.269992847
+66,524288,1,1,2,brute force (BF),
+66,524288,1,1,4,brute force (BF),
+67,524288,1,1,2,"Knight (original, KO)",0.077387794
+67,524288,1,1,2,"Knight (extended, KE)",0.1388138085
+67,524288,1,1,2,divide-and-conquer (DAC),1.024831892
+67,524288,1,1,4,divide-and-conquer (DAC),2.217800072
+67,524288,1,1,2,brute force (BF),
+67,524288,1,1,4,brute force (BF),
+68,524288,1,1,2,"Knight (original, KO)",0.0749133385
+68,524288,1,1,2,"Knight (extended, KE)",0.1312385975
+68,524288,1,1,2,divide-and-conquer (DAC),1.0864396145
+68,524288,1,1,4,divide-and-conquer (DAC),2.2070406375
+68,524288,1,1,2,brute force (BF),
+68,524288,1,1,4,brute force (BF),
+69,524288,1,1,2,"Knight (original, KO)",0.047695564
+69,524288,1,1,2,"Knight (extended, KE)",0.0895136495
+69,524288,1,1,2,divide-and-conquer (DAC),0.830815538
+69,524288,1,1,4,divide-and-conquer (DAC),2.1576991155
+69,524288,1,1,2,brute force (BF),
+69,524288,1,1,4,brute force (BF),
+70,524288,1,1,2,"Knight (original, KO)",0.0508598955
+70,524288,1,1,2,"Knight (extended, KE)",0.095124964
+70,524288,1,1,2,divide-and-conquer (DAC),0.84248792
+70,524288,1,1,4,divide-and-conquer (DAC),1.5574415995
+70,524288,1,1,2,brute force (BF),
+70,524288,1,1,4,brute force (BF),
+71,524288,1,1,2,"Knight (original, KO)",0.073563781
+71,524288,1,1,2,"Knight (extended, KE)",0.1253714515
+71,524288,1,1,2,divide-and-conquer (DAC),1.0531803705
+71,524288,1,1,4,divide-and-conquer (DAC),2.280054731
+71,524288,1,1,2,brute force (BF),
+71,524288,1,1,4,brute force (BF),
+72,524288,1,1,2,"Knight (original, KO)",0.081926219
+72,524288,1,1,2,"Knight (extended, KE)",0.1445539615
+72,524288,1,1,2,divide-and-conquer (DAC),1.0413676375
+72,524288,1,1,4,divide-and-conquer (DAC),1.673456538
+72,524288,1,1,2,brute force (BF),
+72,524288,1,1,4,brute force (BF),
+73,524288,1,1,2,"Knight (original, KO)",0.047969917
+73,524288,1,1,2,"Knight (extended, KE)",0.0906000075
+73,524288,1,1,2,divide-and-conquer (DAC),1.0620414565
+73,524288,1,1,4,divide-and-conquer (DAC),2.2050833625
+73,524288,1,1,2,brute force (BF),
+73,524288,1,1,4,brute force (BF),
+74,524288,1,1,2,"Knight (original, KO)",0.0746514735
+74,524288,1,1,2,"Knight (extended, KE)",0.1277931215
+74,524288,1,1,2,divide-and-conquer (DAC),1.0907007605
+74,524288,1,1,4,divide-and-conquer (DAC),2.21040834
+74,524288,1,1,2,brute force (BF),
+74,524288,1,1,4,brute force (BF),
+75,524288,1,1,2,"Knight (original, KO)",0.0817733435
+75,524288,1,1,2,"Knight (extended, KE)",0.144275256
+75,524288,1,1,2,divide-and-conquer (DAC),1.041275909
+75,524288,1,1,4,divide-and-conquer (DAC),2.2147105675
+75,524288,1,1,2,brute force (BF),
+75,524288,1,1,4,brute force (BF),
+76,524288,1,1,2,"Knight (original, KO)",0.077650175
+76,524288,1,1,2,"Knight (extended, KE)",0.134000506
+76,524288,1,1,2,divide-and-conquer (DAC),1.0744096595
+76,524288,1,1,4,divide-and-conquer (DAC),1.606071835
+76,524288,1,1,2,brute force (BF),
+76,524288,1,1,4,brute force (BF),
+77,524288,1,1,2,"Knight (original, KO)",0.078520563
+77,524288,1,1,2,"Knight (extended, KE)",0.134185087
+77,524288,1,1,2,divide-and-conquer (DAC),1.0253471135
+77,524288,1,1,4,divide-and-conquer (DAC),2.2455260235
+77,524288,1,1,2,brute force (BF),
+77,524288,1,1,4,brute force (BF),
+78,524288,1,1,2,"Knight (original, KO)",0.077391807
+78,524288,1,1,2,"Knight (extended, KE)",0.1319631125
+78,524288,1,1,2,divide-and-conquer (DAC),1.0763063715
+78,524288,1,1,4,divide-and-conquer (DAC),2.220184505
+78,524288,1,1,2,brute force (BF),
+78,524288,1,1,4,brute force (BF),
+79,524288,1,1,2,"Knight (original, KO)",0.07390999
+79,524288,1,1,2,"Knight (extended, KE)",0.127682518
+79,524288,1,1,2,divide-and-conquer (DAC),1.0500766555
+79,524288,1,1,4,divide-and-conquer (DAC),2.263120261
+79,524288,1,1,2,brute force (BF),
+79,524288,1,1,4,brute force (BF),
+80,524288,1,1,2,"Knight (original, KO)",0.079258862
+80,524288,1,1,2,"Knight (extended, KE)",0.135205662
+80,524288,1,1,2,divide-and-conquer (DAC),1.0715036645
+80,524288,1,1,4,divide-and-conquer (DAC),2.269899679
+80,524288,1,1,2,brute force (BF),
+80,524288,1,1,4,brute force (BF),
+81,524288,1,1,2,"Knight (original, KO)",0.076180064
+81,524288,1,1,2,"Knight (extended, KE)",0.129977516
+81,524288,1,1,2,divide-and-conquer (DAC),1.0593555835
+81,524288,1,1,4,divide-and-conquer (DAC),2.21274385
+81,524288,1,1,2,brute force (BF),
+81,524288,1,1,4,brute force (BF),
+82,524288,1,1,2,"Knight (original, KO)",0.0761740995
+82,524288,1,1,2,"Knight (extended, KE)",0.133630923
+82,524288,1,1,2,divide-and-conquer (DAC),1.0717978205
+82,524288,1,1,4,divide-and-conquer (DAC),2.2034464985
+82,524288,1,1,2,brute force (BF),
+82,524288,1,1,4,brute force (BF),
+83,524288,1,1,2,"Knight (original, KO)",0.0711704175
+83,524288,1,1,2,"Knight (extended, KE)",0.123425608
+83,524288,1,1,2,divide-and-conquer (DAC),1.025007628
+83,524288,1,1,4,divide-and-conquer (DAC),2.261882338
+83,524288,1,1,2,brute force (BF),
+83,524288,1,1,4,brute force (BF),
+84,524288,1,1,2,"Knight (original, KO)",0.049292827
+84,524288,1,1,2,"Knight (extended, KE)",0.094254428
+84,524288,1,1,2,divide-and-conquer (DAC),0.858388671
+84,524288,1,1,4,divide-and-conquer (DAC),1.563414808
+84,524288,1,1,2,brute force (BF),
+84,524288,1,1,4,brute force (BF),
+85,524288,1,1,2,"Knight (original, KO)",0.0730059205
+85,524288,1,1,2,"Knight (extended, KE)",0.125688047
+85,524288,1,1,2,divide-and-conquer (DAC),0.814436669
+85,524288,1,1,4,divide-and-conquer (DAC),1.418101315
+85,524288,1,1,2,brute force (BF),
+85,524288,1,1,4,brute force (BF),
+86,524288,1,1,2,"Knight (original, KO)",0.0788521895
+86,524288,1,1,2,"Knight (extended, KE)",0.138466281
+86,524288,1,1,2,divide-and-conquer (DAC),1.0530683395
+86,524288,1,1,4,divide-and-conquer (DAC),2.1826466245
+86,524288,1,1,2,brute force (BF),
+86,524288,1,1,4,brute force (BF),
+87,524288,1,1,2,"Knight (original, KO)",0.076830774
+87,524288,1,1,2,"Knight (extended, KE)",0.1311226295
+87,524288,1,1,2,divide-and-conquer (DAC),0.8364042465
+87,524288,1,1,4,divide-and-conquer (DAC),1.420211501
+87,524288,1,1,2,brute force (BF),
+87,524288,1,1,4,brute force (BF),
+88,524288,1,1,2,"Knight (original, KO)",0.078198716
+88,524288,1,1,2,"Knight (extended, KE)",0.133929847
+88,524288,1,1,2,divide-and-conquer (DAC),1.0958109465
+88,524288,1,1,4,divide-and-conquer (DAC),2.086062282
+88,524288,1,1,2,brute force (BF),
+88,524288,1,1,4,brute force (BF),
+89,524288,1,1,2,"Knight (original, KO)",0.0779688955
+89,524288,1,1,2,"Knight (extended, KE)",0.136813144
+89,524288,1,1,2,divide-and-conquer (DAC),1.033323609
+89,524288,1,1,4,divide-and-conquer (DAC),2.182150203
+89,524288,1,1,2,brute force (BF),
+89,524288,1,1,4,brute force (BF),
+90,524288,1,1,2,"Knight (original, KO)",0.047130816
+90,524288,1,1,2,"Knight (extended, KE)",0.0875380465
+90,524288,1,1,2,divide-and-conquer (DAC),1.058350249
+90,524288,1,1,4,divide-and-conquer (DAC),1.5586483255
+90,524288,1,1,2,brute force (BF),
+90,524288,1,1,4,brute force (BF),
+91,524288,1,1,2,"Knight (original, KO)",0.0758782015
+91,524288,1,1,2,"Knight (extended, KE)",0.1321646975
+91,524288,1,1,2,divide-and-conquer (DAC),0.7862326545
+91,524288,1,1,4,divide-and-conquer (DAC),1.4419509925
+91,524288,1,1,2,brute force (BF),
+91,524288,1,1,4,brute force (BF),
+92,524288,1,1,2,"Knight (original, KO)",0.0766229805
+92,524288,1,1,2,"Knight (extended, KE)",0.133329526
+92,524288,1,1,2,divide-and-conquer (DAC),1.0623182615
+92,524288,1,1,4,divide-and-conquer (DAC),2.1690942275
+92,524288,1,1,2,brute force (BF),
+92,524288,1,1,4,brute force (BF),
+93,524288,1,1,2,"Knight (original, KO)",0.0497520955
+93,524288,1,1,2,"Knight (extended, KE)",0.094068064
+93,524288,1,1,2,divide-and-conquer (DAC),0.8155977445
+93,524288,1,1,4,divide-and-conquer (DAC),1.417626282
+93,524288,1,1,2,brute force (BF),
+93,524288,1,1,4,brute force (BF),
+94,524288,1,1,2,"Knight (original, KO)",0.079233961
+94,524288,1,1,2,"Knight (extended, KE)",0.135823633
+94,524288,1,1,2,divide-and-conquer (DAC),1.0569092145
+94,524288,1,1,4,divide-and-conquer (DAC),1.4290391945
+94,524288,1,1,2,brute force (BF),
+94,524288,1,1,4,brute force (BF),
+95,524288,1,1,2,"Knight (original, KO)",0.073575547
+95,524288,1,1,2,"Knight (extended, KE)",0.1290506465
+95,524288,1,1,2,divide-and-conquer (DAC),1.0334436445
+95,524288,1,1,4,divide-and-conquer (DAC),1.442146657
+95,524288,1,1,2,brute force (BF),
+95,524288,1,1,4,brute force (BF),
+96,524288,1,1,2,"Knight (original, KO)",0.0758389095
+96,524288,1,1,2,"Knight (extended, KE)",0.12977829
+96,524288,1,1,2,divide-and-conquer (DAC),1.060020193
+96,524288,1,1,4,divide-and-conquer (DAC),1.481548966
+96,524288,1,1,2,brute force (BF),
+96,524288,1,1,4,brute force (BF),
+97,524288,1,1,2,"Knight (original, KO)",0.0730755265
+97,524288,1,1,2,"Knight (extended, KE)",0.1270952255
+97,524288,1,1,2,divide-and-conquer (DAC),1.0252561765
+97,524288,1,1,4,divide-and-conquer (DAC),2.2447685625
+97,524288,1,1,2,brute force (BF),
+97,524288,1,1,4,brute force (BF),
+98,524288,1,1,2,"Knight (original, KO)",0.049773899
+98,524288,1,1,2,"Knight (extended, KE)",0.0926851125
+98,524288,1,1,2,divide-and-conquer (DAC),0.8305029525
+98,524288,1,1,4,divide-and-conquer (DAC),1.609447833
+98,524288,1,1,2,brute force (BF),
+98,524288,1,1,4,brute force (BF),
+99,524288,1,1,2,"Knight (original, KO)",0.040301029
+99,524288,1,1,2,"Knight (extended, KE)",0.079812888
+99,524288,1,1,2,divide-and-conquer (DAC),0.6681189975
+99,524288,1,1,4,divide-and-conquer (DAC),1.191196575
+99,524288,1,1,2,brute force (BF),
+99,524288,1,1,4,brute force (BF),
+100,524288,1,1,2,"Knight (original, KO)",0.042930365
+100,524288,1,1,2,"Knight (extended, KE)",0.082884445
+100,524288,1,1,2,divide-and-conquer (DAC),0.669596161
+100,524288,1,1,4,divide-and-conquer (DAC),1.1859477685
+100,524288,1,1,2,brute force (BF),
+100,524288,1,1,4,brute force (BF),
