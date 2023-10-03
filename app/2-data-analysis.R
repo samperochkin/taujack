@@ -61,7 +61,7 @@ pickY <- function(k){
 
 # Quick comparison of runtimes (w/ Toronto) -------------------------------
 runtimes <- function(Y, r){
-  cat("computing tau for dataset with n=", nrow(Y), "obs. and p=", ncol(Y), "dimensions.\n")
+  cat("computing tau for dataset with n=", nrow(Y), "obs. and p=", ncol(Y), "dimensions, using", r, "of them.\n")
   t1 <- system.time(dac_seq(Y[,1:r], 25))[3] |> unname()
   t2 <- system.time(bruteForce(Y[,1:r], seq=T))[3] |> unname()
   c(dac = t1, brute_force = t2, ratio = round(t2/t1,2))
@@ -79,8 +79,8 @@ runtimes(pickY(2), r=30)
 
 # More complete analysis - recomputes all taus everytime. Quite long given we run BF.
 # rtimes <- sapply(2:p, \(k) runtimes(pickY(2), r=k))
-# saveRDS(rtimes, "app/objects/rtimes.rds")
-rtimes <- readRDS("app/objects/rtimes.rds")
+# saveRDS(rtimes, "app/rtimes.rds")
+rtimes <- readRDS("app/rtimes.rds")
 rtimes_df <- data.frame(algorithm = rep(c("DAC", "BF"), times=p-1),
                         p = rep(2:p, each=2), runtime = c(rtimes[1:2,]))
 ggplot(rtimes_df, aes(x=p-1, y=runtime, linetype=algorithm)) +
@@ -187,7 +187,7 @@ sapply(Shs, \(S) matrixcalc::is.positive.definite(S[1:10, 1:10]))
 
 ####---- select number of terms we want to use in the zeta sum 
 k <- 1 # station (change as wished)
-i <- 1 # we focus on tau_ij (in the plots only)
+i <- p # we focus on tau_ij (in the plots only)
 par(mfrow = c(2,5), mar=c(2,2,3,1))
 Zh <- Zhs[[k]]
 for(j in 1:min(L,10)){
@@ -232,7 +232,7 @@ data.frame(city = rep(stns_name, each=L), lag = rep(1:L, times=q), p = p,
 # the overlap between some of the data from distinct time series
 
 # Let's focus on the first 10 lags, for convenience
-L <- 1
+L <- 15
 p <- L+1
 K <- 20
 
@@ -269,6 +269,7 @@ Zh <- sapply(0:K, \(j){
   
   return(z)
 }, simplify = "array")
+
 Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
 Sh <- 4*(Zh[,,1] + Zsum)
 image(t(Sh[(q*p-q):1,]))
@@ -284,24 +285,19 @@ ind1 <- (1-1)*(p-1) + 1:(p-1)
 ind2 <- (2-1)*(p-1) + 1:(p-1)
 ind3 <- (3-1)*(p-1) + 1:(p-1)
 
-# to remove first components
-# ind1 <- ind1[-1]
-# ind2 <- ind2[-1]
-# ind3 <- ind3[-1]
-l <- length(ind1)
+# keep only...
+keep <- 1 # first component (p=2, first test in paper)
+# keep <- 1:2 # first two component (p=3, second test in paper)
+# keep <- 1:11 # first 11 components (p=12, third test in paper)
+ind1 <- ind1[keep]; ind2 <- ind2[keep]; ind3 <- ind3[keep]
+l <- length(keep)
 
 # submatrices of Sigma with corresponding samples sizes
-S1 <- Sh[ind1,ind1]
-S2 <- Sh[ind2,ind2]
-S3 <- Sh[ind3,ind3]
-S12 <- Sh[ind1,ind2]
-S23 <- Sh[ind2,ind3]
-
-n1 <- nn0[ind1[1],ind1[1]]
-n2 <- nn0[ind2[1],ind2[1]]
-n3 <- nn0[ind3[1],ind3[1]]
-n12 <- nn0[ind1[1],ind2[1]]
-n23 <- nn0[ind2[1],ind3[1]]
+S1 <- Sh[ind1,ind1]; n1 <- nn0[ind1[1],ind1[1]]
+S2 <- Sh[ind2,ind2]; n2 <- nn0[ind2[1],ind2[1]]
+S3 <- Sh[ind3,ind3]; n3 <- nn0[ind3[1],ind3[1]]
+S12 <- Sh[ind1,ind2]; n12 <- nn0[ind1[1],ind2[1]]
+S23 <- Sh[ind2,ind3]; n23 <- nn0[ind2[1],ind3[1]]
 
 # compute new Sigma matrix adjusting for sample sizes
 # based on the expansion of sqrt(N)*(thi - thj)
