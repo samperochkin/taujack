@@ -27,30 +27,22 @@ gg <- ggplot(times0[p %in% c(2,4,6,10) & type != "mean runtime"],
   theme(aspect.ratio = 1,
         panel.grid.minor = element_blank(),
         axis.text=element_text(size=9),
-        # legend.position = "bottom",
-        # legend.direction = "horizontal",
-        # legend.box = "vertical",
         legend.position = "right",
         legend.direction = "vertical",
         legend.box = "vertical",
-        legend.background = element_rect(colour="gray"),
+        legend.background = element_rect(colour="black"),
         legend.title = element_text(size = 10),
         legend.text=element_text(size=10),
         panel.spacing = unit(0.5, "lines"),
         strip.text.x = element_text(size = 10)) +
   # guides(col = guide_legend(ncol=2), linetype = guide_legend(ncol=2)) +
-  scale_y_continuous(breaks = seq(-14,2,4)) +
+  scale_x_continuous(breaks = seq(6,20,2)) +
+  scale_y_continuous(breaks = seq(-14,6,4)) +
   xlab(expression(log[2]~n)) +
   ylab(expression(log[2](average~runtime))) +
   labs(col="algorithm") +
   scale_linetype_manual(name = "dimension (p)", values = c(1,2,3,4)) +
   geom_line(size=.5) +
-  # geom_point(size=.25) +
-  # geom_line() +
-  # geom_point() +
-  # facet_grid(tau~type, labeller = label_bquote(cols = tau == .(tau)))
-  # facet_grid(tau~type)
-  # facet_grid(type~tau, labeller = label_bquote(cols = tau == .(tau)))
   facet_grid(tau~type, labeller = label_bquote(rows = tau == .(tau)))
 gg
 
@@ -77,16 +69,13 @@ gg <- ggplot(times0[p %in% c(2,4,6,10) & type == "median runtime" & tau %in% c(0
         panel.spacing = unit(0.5, "lines"),
         strip.text.x = element_text(size = 10)) +
   guides(col = guide_legend(ncol=2), linetype = guide_legend(ncol=2)) +
-  # guides(linetype = guide_legend(ncol=2)) +
-  # guides(colour = "none") +
-  scale_x_continuous(breaks = seq(6,18,2)) +
-  scale_y_continuous(breaks = seq(-14,2,4)) +
+  scale_x_continuous(breaks = seq(6,20,2)) +
+  scale_y_continuous(breaks = seq(-14,6,4)) +
   xlab(expression(log[2]~n)) +
   ylab(expression(log[2](median~runtime))) +
   labs(col="algorithm") +
   scale_linetype_manual(name = "dimension (p)", values = c(1,2,3,4)) +
   geom_line(size=.5) +
-  # geom_point(size=.25) +
   facet_grid(~tau, labeller = label_bquote(cols = tau == .(tau)))
 gg
 

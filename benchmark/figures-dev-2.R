@@ -25,10 +25,18 @@ times0[grepl("DAC", fun), fun := "DAC"]
 type0 <- "max. runtime"
 type0 <- "median runtime"
 times0[order(fun, n, p)][type == type0 & tau == 1, diff(log(time,2)), .(fun, p)]
+times0[order(fun, n, p)][type == type0 & tau == 1 & n %in% 2^(16:21), diff(log(time,2)), .(fun, p)]
 times0[order(fun, n, p)][type == type0 & tau == 1 & n %in% 2^(16:18), diff(log(time,2)), .(fun, p)]
 times0[order(fun, n, p)][type == type0 & tau == 1 & n %in% 2^(19:21), diff(log(time,2)), .(fun, p)]
 times0[order(fun, n, p)][type == type0 & tau == 1 & n %in% 2^(17:21), diff(log(time,2)), .(fun, p)]
 times0[order(fun, p, n)][type == "median runtime" & tau == 1, median(log(time,2)), .(fun, p, n)]
+
+
+tt <- times0[order(fun, n, p)][type == type0 & tau == 1, diff(log(time,2)), .(fun, p)]
+plot(tt[fun == "DAC" & p == 2]$V1, type = "o")
+lines(tt[fun == "DAC" & p == 4]$V1, type = "o", col=2)
+lines(tt[fun == "DAC" & p == 6]$V1, type = "o", col=3)
+lines(tt[fun == "DAC" & p == 10]$V1, type = "o", col=3)
 
 
 gg <- ggplot(times0[p %in% c(2,4,6,10) & type != "mean runtime"],
@@ -49,7 +57,7 @@ gg <- ggplot(times0[p %in% c(2,4,6,10) & type != "mean runtime"],
         panel.spacing = unit(0.5, "lines"),
         strip.text.x = element_text(size = 10)) +
   # guides(col = guide_legend(ncol=2), linetype = guide_legend(ncol=2)) +
-  scale_y_continuous(breaks = seq(-14,2,4)) +
+  scale_y_continuous(breaks = seq(-14,6,4)) +
   xlab(expression(log[2]~n)) +
   ylab(expression(log[2](average~runtime))) +
   labs(col="algorithm") +
@@ -84,7 +92,7 @@ gg <- ggplot(times0[p %in% c(2,4,6,10) & type == "median runtime" & tau %in% c(0
   guides(col = guide_legend(ncol=2), linetype = guide_legend(ncol=2)) +
   # guides(linetype = guide_legend(ncol=2)) +
   # guides(colour = "none") +
-  scale_x_continuous(breaks = seq(6,18,2)) +
+  scale_x_continuous(breaks = seq(6,20,2)) +
   scale_y_continuous(breaks = seq(-14,2,4)) +
   xlab(expression(log[2]~n)) +
   ylab(expression(log[2](median~runtime))) +
