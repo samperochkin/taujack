@@ -81,7 +81,7 @@ gg <- data %>% group_by(station_name, year) %>%
   geom_line(size=.25) + geom_point(size=.25) +
   facet_grid(rows="station_name", scales = "free_y")
 gg # will reuse gg later
-ggsave(filename = "app/figures/series_raw_mean.pdf", device = "pdf",
+ggsave(filename = "figures/series_raw_mean.pdf", device = "pdf",
        width = 6.5, height = 4, units = "in")
 
 # clear seasonal trends
@@ -92,7 +92,7 @@ data %>% filter(year %in% 1975:1980) %>%
   theme_bw() + ylab("(monthly) mean temperature") +
   geom_line(size=.25) + geom_point(size=.25) +
   facet_grid(rows="station_name", scales = "free_y")
-ggsave(filename = "app/figures/series_raw_mean_seas.pdf", device = "pdf",
+ggsave(filename = "figures/series_raw_mean_seas.pdf", device = "pdf",
        width = 6.5, height = 4, units = "in")
 
 
@@ -177,7 +177,7 @@ data %>% group_by(year, station_name) %>%
   geom_line(aes(y=m_mu), alpha=.35, size=.5, col="red") +
   geom_line(size=.25) + geom_point(size=.25) +
   facet_grid(rows = "station_name", scales = "free_y")
-ggsave(filename = "app/figures/series_fit_yearly.pdf", device = "pdf",
+ggsave(filename = "figures/series_fit_yearly.pdf", device = "pdf",
        width = 6.5, height = 3, units = "in")
 
 # quick check (monthly)
@@ -190,7 +190,7 @@ data %>% filter(year %in% (y0 + 1:10)) %>%
   theme_bw() + theme(legend.position = "none") + ylab("(seasonal) mean temperature") +
   geom_line(aes(y=m_mu), alpha=.35, size=.5, col="red") + geom_point(size=.25) +
   facet_grid(rows = "station_name", scales = "free_y")
-ggsave(filename = "app/figures/series_fit_seas.pdf", device = "pdf",
+ggsave(filename = "figures/series_fit_seas.pdf", device = "pdf",
        width = 6.5, height = 3, units = "in")
 
 # quick check (monthly)
@@ -202,7 +202,7 @@ data %>% filter(year %in% y0) %>%
   geom_line(aes(y=mu), alpha=.75, size=.5, col="red") +
   geom_point(size=.1) +
   facet_grid(rows = "station_name", scales = "free_y")
-ggsave(filename = "app/figures/temp_daily.pdf", device = "pdf",
+ggsave(filename = "figures/temp_daily.pdf", device = "pdf",
        width = 6.5, height = 3, units = "in")
 
 # quick check (by yday)
@@ -213,7 +213,7 @@ data %>% filter(year %in% y0) %>%
   ylab("centered temperature") + xlab("day of the year") +
   geom_point(size=.1) +
   facet_grid(rows = "station_name", scales = "free_y")
-ggsave(filename = "app/figures/ctemp_daily.pdf", device = "pdf",
+ggsave(filename = "figures/ctemp_daily.pdf", device = "pdf",
        width = 6.5, height = 3, units = "in")
 ggplot(data, aes(x=yday, y=ctemp)) +
   theme_bw() + theme(legend.position = "none") + 
@@ -228,7 +228,7 @@ ggplot(data[sample(nrow(data), nrow(data)/5),], aes(x=yday, y=ctemp)) +
   ylab("centered temperature") + xlab("day of the year") +
   geom_point(size=.1) +
   facet_grid(rows = "station_name", scales = "free_y")
-ggsave(filename = "app/figures/ctemp_seas.pdf", device = "pdf",
+ggsave(filename = "figures/ctemp_seas.pdf", device = "pdf",
        width = 6.5, height = 3, units = "in")
 
 
@@ -276,7 +276,7 @@ ggplot(data, aes(x = pseudo_temp)) +
   scale_x_continuous(breaks = seq(0,1,.25), labels = c("0", "0.25", "0.5", "0.75", "1")) +
   geom_histogram(breaks=seq(0,1,.05), position = position_stack()) +
   facet_wrap(~station_name)
-ggsave(filename = "app/figures/pseudo_hist.pdf", device = "pdf",
+ggsave(filename = "figures/pseudo_hist.pdf", device = "pdf",
        width = 6.5, height = 2, units = "in")
 
 # note that there are equalities, but very very few of them. can disregard.

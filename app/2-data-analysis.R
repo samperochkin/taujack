@@ -87,7 +87,7 @@ ggplot(rtimes_df, aes(x=p-1, y=runtime, linetype=algorithm)) +
   theme_bw() + xlab("maximum lag (p-1)") + ylab("runtime (in sec.)") +
   scale_linetype_manual(values = c(1,2)) +
   geom_line(size=.25)# + geom_point(size=.25)
-ggsave("app/figures/runtimes.pdf", device = "pdf", width = 6.5, height = 2, units = "in")
+ggsave("figures/runtimes.pdf", device = "pdf", width = 6.5, height = 2, units = "in")
 
 ratio_df <- rtimes_df %>% group_by(p) %>% summarise(ratio = exp(diff(log(runtime))))
 print(ratio_df, n = nrow(ratio_df))

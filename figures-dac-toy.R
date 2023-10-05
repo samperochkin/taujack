@@ -28,11 +28,8 @@ ggplot(df, aes(x=x,y=y)) +
   geom_point(data=data, aes(x=x, y=y), col="gray", size=.5) +
   geom_vline(xintercept=.5, lty=2, size=.25) +
   geom_text(aes(label=lab), parse = T, size = 3.25)
-ggsave("~/Dropbox/Academia/Papers/Efficient inference for Kendalls tau/figures/dac-toy-1.pdf", 
+ggsave("figures/dac-toy-1.pdf", 
        device = "pdf", height = 1.75, width = 1.75)
-# pdf("~/Dropbox/Academia/Papers/Efficient inference for Kendalls tau/figures/dac-toy.pdf", height = 3, width = 3)
-# print(gg)
-# dev.off()
 
 
 df <- data.frame(
@@ -54,7 +51,7 @@ ggplot(df, aes(x=x,y=y)) +
   geom_hline(yintercept=s, lty=2, size=.25) +
   geom_vline(xintercept=.5, lty=2, size=.25) +
   geom_text(aes(label=lab), parse = T, size = 3.25)
-ggsave("~/Dropbox/Academia/Papers/Efficient inference for Kendalls tau/figures/dac-toy-2.pdf", 
+ggsave("figures/dac-toy-2.pdf", 
        device = "pdf", height = 1.75, width = 1.825)
 
 
