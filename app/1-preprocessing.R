@@ -174,7 +174,7 @@ data %>% group_by(year, station_name) %>%
   # summarise(m_mt = mean(mean_temp, na.rm=T), m_mu = mean(mu, na.rm=T)) %>%
   ggplot(aes(x=year, y=m_mt)) +
   theme_bw() + theme(legend.position = "none") + ylab("(yearly) mean temperature") +
-  geom_line(aes(y=m_mu), alpha=.75, size=.5, col="red") +
+  geom_line(aes(y=m_mu), alpha=.35, size=.5, col="red") +
   geom_line(size=.25) + geom_point(size=.25) +
   facet_grid(rows = "station_name", scales = "free_y")
 ggsave(filename = "app/figures/series_fit_yearly.pdf", device = "pdf",
@@ -188,7 +188,7 @@ data %>% filter(year %in% (y0 + 1:10)) %>%
             m_mu = mean(mu, na.rm=F)) %>%
   ggplot(aes(x=year+month/12, y=m_mt)) +
   theme_bw() + theme(legend.position = "none") + ylab("(seasonal) mean temperature") +
-  geom_line(aes(y=m_mu), alpha=.75, size=.5, col="gray") + geom_point(size=.25) +
+  geom_line(aes(y=m_mu), alpha=.35, size=.5, col="red") + geom_point(size=.25) +
   facet_grid(rows = "station_name", scales = "free_y")
 ggsave(filename = "app/figures/series_fit_seas.pdf", device = "pdf",
        width = 6.5, height = 3, units = "in")
@@ -216,6 +216,14 @@ data %>% filter(year %in% y0) %>%
 ggsave(filename = "app/figures/ctemp_daily.pdf", device = "pdf",
        width = 6.5, height = 3, units = "in")
 ggplot(data, aes(x=yday, y=ctemp)) +
+  theme_bw() + theme(legend.position = "none") + 
+  ylab("centered temperature") + xlab("day of the year") +
+  geom_point(size=.1) +
+  facet_grid(rows = "station_name", scales = "free_y")
+
+# subsample for figure in paper
+set.seed(34)
+ggplot(data[sample(nrow(data), nrow(data)/5),], aes(x=yday, y=ctemp)) +
   theme_bw() + theme(legend.position = "none") + 
   ylab("centered temperature") + xlab("day of the year") +
   geom_point(size=.1) +

@@ -38,7 +38,7 @@ X <- data %>% ungroup %>%
   as.matrix()
 
 # dataset for temporal dependence analysis
-L <- 30 # number of lags we consider
+L <- 29 # number of lags we consider
 p <- L+1 # our datasets will thus have p+1 columns
 q <- length(stns_id) # number of stations
 Ys <- lapply(1:q, \(k) sapply(1:p, \(r) X[r:(nrow(X)-p+r),k]))
@@ -91,7 +91,7 @@ ggsave("app/figures/runtimes.pdf", device = "pdf", width = 6.5, height = 2, unit
 
 ratio_df <- rtimes_df %>% group_by(p) %>% summarise(ratio = exp(diff(log(runtime))))
 print(ratio_df, n = nrow(ratio_df))
-diff(rtimes_df[rtimes_df$p == 31,]$runtime)
+diff(rtimes_df[rtimes_df$p == 30,]$runtime)
 
 
 
@@ -112,6 +112,8 @@ diff(rtimes_df[rtimes_df$p == 31,]$runtime)
 #########################################################
 #### Pairwise tau at multiple lags for each stations ####
 #########################################################
+
+# omitted from the analysis in the paper.
 
 K <- 100 # number of terms of the zeta sum we want to compute
 res <- lapply(1:q, \(k){ # Cna2tsz takes a bit of time, but nothing crazy
@@ -222,9 +224,17 @@ data.frame(city = rep(stns_name, each=L), lag = rep(1:L, times=q), p = p,
            sigma = sqrt(c(sapply(1:q, \(k) diag(Shs[[k]])/ns[k])))) %>%
   ggplot(aes(x = lag, y = tau, col=city, group=city, fill=city)) +
   theme_bw() + cc +
-  geom_ribbon(aes(ymin = tau - 2*sigma, ymax = tau + 2*sigma), alpha=.3, size=0) +
-  geom_line() + geom_point()
-
+  xlab("lag (k-1)") + ylab(bquote(hat(tau)["k"])) +
+  theme(legend.position = c(.75,.6),
+        text = element_text(size=9),
+        axis.text=element_text(size=9),
+        axis.title.y = element_text(angle = 0, vjust = 0.5),
+        legend.background = element_rect(colour="black"),
+        legend.title = element_text(size = 9),
+        legend.text=element_text(size=9)) +
+  geom_ribbon(aes(ymin = tau - 2*sigma, ymax = tau + 2*sigma), alpha=.3, colour=NA) +
+  geom_line(size=.25) + geom_point(size=.25)
+# for figure in paper, see tau-figure.R
 
 
 # Inference (test of equality of the two sets autocorrelations) -----------

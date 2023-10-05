@@ -12,7 +12,7 @@ library(microbenchmark, lib.loc = "~/R/x86_64-pc-linux-gnu-library/4.3/")
 # functions to benchmark
 library(pcaPP) # cor.fk
 sourceCpp("src/ms.cpp")   # for Knight's extended alg.
-sourceCpp("src/dac_seqq.cpp")  # divide-and-conquer alg.
+sourceCpp("src/dac_seq.cpp")  # divide-and-conquer alg.
 sourceCpp("src/bf.cpp")   # brute force alg.
 source("functions.R")       # wrappers (performs re-ordering if necessary)
 
