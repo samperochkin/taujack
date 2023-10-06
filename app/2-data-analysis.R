@@ -189,7 +189,7 @@ sapply(Shs, \(S) matrixcalc::is.positive.definite(S[1:10, 1:10]))
 
 ####---- select number of terms we want to use in the zeta sum 
 k <- 1 # station (change as wished)
-i <- p # we focus on tau_ij (in the plots only)
+i <- 1 # we focus on tau_ij (in the plots only)
 par(mfrow = c(2,5), mar=c(2,2,3,1))
 Zh <- Zhs[[k]]
 for(j in 1:min(L,10)){
