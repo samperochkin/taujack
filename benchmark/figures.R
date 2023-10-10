@@ -86,7 +86,7 @@ gg <- ggplot(times0[p %in% c(2,4,6,10) & type != "mean runtime"],
   labs(col="algorithm") +
   scale_linetype_manual(name = "dimension (p)", values = c(1,2,3,4)) +
   geom_line(size=.5) +
-  facet_grid(tau~type, labeller = label_bquote(rows = tau == .(tau)))
+  facet_grid(tau~type, labeller = label_bquote(rows = "t" == .(tau)))
 gg
 
 pdf("figures/bench_res.pdf", height = 6.5*1.16, width = 6.5)
@@ -120,7 +120,7 @@ gg <- ggplot(times0[p %in% c(2,4,6,10) & type == "median runtime" & tau %in% c(0
   labs(col="algorithm") +
   scale_linetype_manual(name = "dimension (p)", values = c(1,2,3,4)) +
   geom_line(size=.5) +
-  facet_grid(~tau, labeller = label_bquote(cols = tau == .(tau)))
+  facet_grid(~tau, labeller = label_bquote(cols = "t" == .(tau)))
 gg
 
 pdf("figures/bench_subres.pdf", height = 6.5/3, width = 6.5)
