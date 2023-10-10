@@ -1,2 +1,5 @@
 # taujack
-C++ and R code for computing the jackknife replicates of Kendall's tau and associated measures. It is based on pseudocode given in Perreault, S. (2023+) XYZ.
+Code computing (Generalized) Kendall's tau and its jackknife variance under serial dependence.
+
+It is tied to the paper:
+Perreault, S. (2023+) Generalized Kendall's tau for serial dependence: computation and inference. (under review)
