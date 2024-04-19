@@ -114,8 +114,6 @@ diff(rtimes_df[rtimes_df$p == 30,]$runtime)
 #########################################################
 
 # omitted from the analysis in the paper.
-# would benefit from a more rigorous method
-# for truncating the sum in (2)
 
 K <- 100 # number of terms of the zeta sum we want to compute
 res <- lapply(1:q, \(k){ # Cna2tsz takes a bit of time, but nothing crazy
@@ -243,7 +241,7 @@ data.frame(city = rep(stns_name, each=L), lag = rep(1:L, times=q), p = p,
 # In what follows, we mimic what Cna2tsz does, but we account for
 # the overlap between some of the data from distinct time series
 
-# Let's focus on the first 15 lags, for convenience
+# Let's focus on the first 10 lags, for convenience
 L <- 15
 p <- L+1
 K <- 20

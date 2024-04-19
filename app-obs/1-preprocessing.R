@@ -279,19 +279,6 @@ ggplot(data, aes(x = pseudo_temp)) +
 ggsave(filename = "figures/pseudo_hist.pdf", device = "pdf",
        width = 6.5, height = 2, units = "in")
 
-ggplot(data, aes(sample = pseudo_temp)) +
-  theme_bw() + theme(legend.position = "none", aspect.ratio = 1) + 
-  xlab("U(0,1) quantiles") + ylab("(preproc.) temp. quantiles") +
-  scale_x_continuous(breaks = seq(0,1,.25), labels = c("0", "0.25", "0.5", "0.75", "1")) +
-  scale_y_continuous(breaks = seq(0,1,.25), labels = c("0", "0.25", "0.5", "0.75", "1")) +
-  geom_qq(distribution = qunif, size=.05, col="gray20") +
-  geom_abline(intercept=0, slope=1, linetype=2, col="red", linewidth=.5) +
-  facet_wrap(~station_name)
-ggsave(filename = "figures/pseudo_qq.pdf", device = "pdf",
-       width = 6, height = 2.5, units = "in")
-
-
-
 # note that there are equalities, but very very few of them. can disregard.
 sapply(1:p, \(k){
   r <- data$station_id == id & !is.na(data$ctemp)

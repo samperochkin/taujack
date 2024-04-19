@@ -1,0 +1,661 @@
+
+R version 4.2.1 (2022-06-23) -- "Funny-Looking Kid"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> ###########################################################################
+> # Script preprocessing the data -------------------------------------------
+> ###########################################################################
+> 
+> # launched with 
+> # R CMD BATCH --vanilla --no-restore app/1-preprocessing.R app/log_pp.txt
+> 
+> # packages ----------------------------------------------------------------
+> library(tidyverse)
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+✔ tibble  3.1.8     ✔ dplyr   1.1.0
+✔ tidyr   1.2.1     ✔ stringr 1.4.1
+✔ readr   2.1.2     ✔ forcats 0.5.2
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+> library(lubridate)
+
+Attaching package: ‘lubridate’
+
+The following objects are masked from ‘package:base’:
+
+    date, intersect, setdiff, union
+
+> library(ggplot2)
+> library(spatstat.geom) # for weighted ecdf
+Loading required package: spatstat.data
+spatstat.geom 3.2-4
+> 
+> 
+> 
+> 
+> # load data and minor changes to names ------------------------------------
+> 
+> # stations we consider
+> stns_id <- readRDS("app/data/stns_id.rds")
+> p <- length(stns_id)
+> 
+> # meta info about the stations
+> meta <- weathercan::stations() %>%
++   filter(station_id %in% stns_id, interval == "day") %>%
++   print(nrow = nrow(.))
+# A tibble: 3 × 16
+  prov  station_n…¹ stati…² clima…³ WMO_id TC_id   lat   lon  elev tz    inter…⁴
+  <chr> <chr>         <dbl> <chr>    <dbl> <chr> <dbl> <dbl> <dbl> <chr> <chr>  
+1 ON    OTTAWA CDA     4333 6105976     NA WCG    45.4 -75.7  79.2 Etc/… day    
+2 ON    WELLAND        4712 6139445     NA <NA>   43.0 -79.3 175.  Etc/… day    
+3 ON    TORONTO        5051 6158350  71266 <NA>   43.7 -79.4 112.  Etc/… day    
+# … with 5 more variables: start <dbl>, end <dbl>, normals <lgl>,
+#   normals_1981_2010 <lgl>, normals_1971_2000 <lgl>, and abbreviated variable
+#   names ¹​station_name, ²​station_id, ³​climate_id, ⁴​interval
+> stns_name <- sapply(stns_id, \(i) meta %>% filter(station_id == i) %>% select(station_name) %>% unlist())
+> 
+> # load data
+> filepaths <- paste0("app/data/daily_data_", stns_id, ".rds")
+> data <- lapply(filepaths, readRDS) |> dplyr::bind_rows()
+> 
+> # clean station names
+> data[data$station_name == "OTTAWA CDA",]$station_name <- "Ottawa"
+> data[data$station_name == "WELLAND",]$station_name <- "Welland"
+> data[data$station_name == "TORONTO",]$station_name <- "Toronto"
+> stns_name[stns_name == "OTTAWA CDA"] <- "Ottawa"
+> stns_name[stns_name == "WELLAND"] <- "Welland"
+> stns_name[stns_name == "TORONTO"] <- "Toronto"
+> str(data)
+tibble [171,744 × 37] (S3: tbl_df/tbl/data.frame)
+ $ station_name      : chr [1:171744] "Ottawa" "Ottawa" "Ottawa" "Ottawa" ...
+ $ station_id        : num [1:171744] 4333 4333 4333 4333 4333 ...
+ $ station_operator  : logi [1:171744] NA NA NA NA NA NA ...
+ $ prov              : chr [1:171744] "ON" "ON" "ON" "ON" ...
+ $ lat               : num [1:171744] 45.4 45.4 45.4 45.4 45.4 ...
+ $ lon               : num [1:171744] -75.7 -75.7 -75.7 -75.7 -75.7 ...
+ $ elev              : num [1:171744] 79.2 79.2 79.2 79.2 79.2 79.2 79.2 79.2 79.2 79.2 ...
+ $ climate_id        : chr [1:171744] "6105976" "6105976" "6105976" "6105976" ...
+ $ WMO_id            : chr [1:171744] NA NA NA NA ...
+ $ TC_id             : chr [1:171744] "WCG" "WCG" "WCG" "WCG" ...
+ $ date              : Date[1:171744], format: "1889-01-01" "1889-01-02" ...
+ $ year              : chr [1:171744] "1889" "1889" "1889" "1889" ...
+ $ month             : chr [1:171744] "01" "01" "01" "01" ...
+ $ day               : chr [1:171744] "01" "02" "03" "04" ...
+ $ qual              : chr [1:171744] NA NA NA NA ...
+ $ cool_deg_days     : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ cool_deg_days_flag: chr [1:171744] NA NA NA NA ...
+ $ dir_max_gust      : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ dir_max_gust_flag : chr [1:171744] NA NA NA NA ...
+ $ heat_deg_days     : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ heat_deg_days_flag: chr [1:171744] NA NA NA NA ...
+ $ max_temp          : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ max_temp_flag     : chr [1:171744] NA NA NA NA ...
+ $ mean_temp         : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ mean_temp_flag    : chr [1:171744] NA NA NA NA ...
+ $ min_temp          : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ min_temp_flag     : chr [1:171744] NA NA NA NA ...
+ $ snow_grnd         : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ snow_grnd_flag    : chr [1:171744] NA NA NA NA ...
+ $ spd_max_gust      : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ spd_max_gust_flag : chr [1:171744] NA NA NA NA ...
+ $ total_precip      : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ total_precip_flag : chr [1:171744] NA NA NA NA ...
+ $ total_rain        : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ total_rain_flag   : chr [1:171744] NA NA NA NA ...
+ $ total_snow        : num [1:171744] NA NA NA NA NA NA NA NA NA NA ...
+ $ total_snow_flag   : chr [1:171744] NA NA NA NA ...
+> 
+> 
+> 
+> # setup time variables ----------------------------------------------------
+> data <- data %>% 
++   select(station_name, station_id, date, mean_temp) %>%
++   mutate(date = as.Date(date))
+> 
+> # use same timespan for all stations
+> dates <- seq(min(data$date),max(data$date), by=1)
+> dates <- tibble(date = rep(dates, length(stns_id)),
++                 station_id = rep(stns_id, each = length(dates)))
+> data <- right_join(data, dates, by=c("date", "station_id"))
+> rm(dates)
+> 
+> # variable creation
+> data <- data %>% 
++   mutate(time = as.integer(date), year = lubridate::year(date),
++          month = lubridate::month(date), week = lubridate::week(date),
++          day = lubridate::mday(date), yday = lubridate::yday(date),
++          station_name = stns_name[match(station_id, stns_id)]) %>%
++   arrange(station_id, date)
+> 
+> 
+> 
+> # summary plots and final choice of dates considered ----------------------
+> 
+> # clear time trends (w/ NAs)
+> data %>% group_by(station_name, year) %>%
++   summarise(mm_temp = mean(mean_temp, na.rm=T)) %>%
++   ggplot(aes(x=year, y=mm_temp)) +
++   theme_bw() + ylab("(yearly) mean temperature") +
++   geom_line(size=.25) + geom_point(size=.25) +
++   facet_grid(rows="station_name", scales = "free_y")
+`summarise()` has grouped output by 'station_name'. You can override using the
+`.groups` argument.
+Warning messages:
+1: Removed 58 row(s) containing missing values (geom_path). 
+2: Removed 115 rows containing missing values (geom_point). 
+> # clear time trends (w/o NAs)
+> gg <- data %>% group_by(station_name, year) %>%
++   summarise(mm_temp = mean(mean_temp, na.rm=F)) %>%
++   ggplot(aes(x=year, y=mm_temp)) +
++   theme_bw() + ylab("(yearly) mean temperature") +
++   geom_line(size=.25) + geom_point(size=.25) +
++   facet_grid(rows="station_name", scales = "free_y")
+`summarise()` has grouped output by 'station_name'. You can override using the
+`.groups` argument.
+> gg # will reuse gg later
+Warning messages:
+1: Removed 68 row(s) containing missing values (geom_path). 
+2: Removed 165 rows containing missing values (geom_point). 
+> ggsave(filename = "app/figures/series_raw_mean.pdf", device = "pdf",
++        width = 6.5, height = 4, units = "in")
+Warning messages:
+1: Removed 68 row(s) containing missing values (geom_path). 
+2: Removed 165 rows containing missing values (geom_point). 
+> 
+> # clear seasonal trends
+> data %>% filter(year %in% 1975:1980) %>%
++   group_by(station_name, month, year) %>%
++   summarise(mm_temp = mean(mean_temp, na.rm=F)) %>%
++   ggplot(aes(x=year+month/12, y=mm_temp)) +
++   theme_bw() + ylab("(monthly) mean temperature") +
++   geom_line(size=.25) + geom_point(size=.25) +
++   facet_grid(rows="station_name", scales = "free_y")
+`summarise()` has grouped output by 'station_name', 'month'. You can override
+using the `.groups` argument.
+Warning message:
+Removed 1 rows containing missing values (geom_point). 
+> ggsave(filename = "app/figures/series_raw_mean_seas.pdf", device = "pdf",
++        width = 6.5, height = 4, units = "in")
+Warning message:
+Removed 1 rows containing missing values (geom_point). 
+> 
+> 
+> 
+> 
+> # model mean based on time (seas. and long term trends) -------------------
+> year_len <- 365 + 6/24 + 9/60/24 + 9/60^2/24
+> 
+> # create sines-cosines basis (for seasonal trend)
+> nSC <- 6
+> s_cols <- paste0("s", 1:nSC)
+> c_cols <- paste0("c", 1:nSC)
+> for (i in 1:nSC) data <- data %>%
++   mutate(!!s_cols[i] := sin(i*2*pi*time/year_len),
++          !!c_cols[i] := cos(i*2*pi*time/year_len))
+> 
+> # create natural spline basis (for long term time trend) based on gg
+> gg
+Warning messages:
+1: Removed 68 row(s) containing missing values (geom_path). 
+2: Removed 165 rows containing missing values (geom_point). 
+> knot_years <- c(1882, 1925, 1953, 1997)
+> gg + geom_vline(xintercept = knot_years, lty=2)
+Warning messages:
+1: Removed 68 row(s) containing missing values (geom_path). 
+2: Removed 165 rows containing missing values (geom_point). 
+> 
+> degree <- 3
+> nB <- length(knot_years) + degree
+> b_cols <- paste0("b", 1:nB)
+> for(b in b_cols) data <- data %>% mutate(!!b := NA)
+> 
+> b_colss <- list()
+> for(k in 1:p){
++   data0 <- data %>% filter(station_id == stns_id[k])
++   min_time <- data0 %>% filter(!is.na(mean_temp)) %>% select(time) %>% unlist() %>% min()
++   knot_times <- data0 %>% filter(day == 1, month == 1, year %in% knot_years, time >= min_time) %>%
++     select(time) %>% unlist()
++   l <- length(knot_times) + degree
++   b_colss[[k]] <- b_cols[1:l]
++   data[data$station_id == stns_id[k], b_colss[[k]]] <- splines::bs(data0$time, knots = knot_times, degree = degree)
++ }
+> gc()
+           used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  2442155 130.5    4531158 242.0  4531158 242.0
+Vcells 11979148  91.4   20253379 154.6 20253379 154.6
+> 
+> # fit least-squares
+> # non_na <- !is.na(data$mean_temp) # for later
+> sc_vars <- paste0("(", paste0(c(s_cols, c_cols), collapse = "+"), ")")
+> lms <- lapply(1:p, \(k){
++   
++   all_cols <- c("station_id", "mean_temp", s_cols, c_cols, b_colss[[k]]) 
++   b_vars <- paste0("(", paste0(b_colss[[k]], collapse = "+"), ")")
++   
++   print(k)
++   # if(stns_name[k] == "Welland"){
++   #   b_vars2 <- paste0("(", paste0("b", 2:nB, collapse = "+"),")")
++   #   ff <- paste0("mean_temp ~ ", sc_vars, " + ", b_vars2, " + (s1+c1):", b_vars2)
++   # }else if(stns_name[k] == "Toronto"){
++   #   ff <- paste0("mean_temp ~ ", sc_vars, " + ", b_vars, " + (s1+c1):(", paste0("b", 1:(nB-1), collapse = "+"), ")")
++   # }else if(stns_name[k] == "Ottawa"){
++   #   b_vars2 <- paste0("(", paste0("b", 1:(nB-1), collapse = "+"),")")
++   #   ff <- paste0("mean_temp ~ ", sc_vars, " + ", b_vars, " + (s1+c1):", b_vars)
++   # }
++   ff <- paste0("mean_temp ~ ", sc_vars, " + ", b_vars, " + (s1+c1):", b_vars)
++   lm(formula = as.formula(ff),
++      data = data[,all_cols] %>% filter(station_id == stns_id[k], !is.na(mean_temp)))
++ })
+[1] 1
+[1] 2
+[1] 3
+> lapply(lms, \(l) summary(l))
+[[1]]
+
+Call:
+lm(formula = as.formula(ff), data = data[, all_cols] %>% filter(station_id == 
+    stns_id[k], !is.na(mean_temp)))
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-25.1839  -3.0682  -0.0478   3.1198  19.7438 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -12.62542    5.07937  -2.486 0.012936 *  
+s1           -8.05622    7.22396  -1.115 0.264767    
+s2           -1.03792    0.03085 -33.645  < 2e-16 ***
+s3           -0.34273    0.03086 -11.107  < 2e-16 ***
+s4            0.16232    0.03085   5.262 1.43e-07 ***
+s5            0.15911    0.03086   5.156 2.53e-07 ***
+s6            0.09549    0.03086   3.095 0.001971 ** 
+c1            3.90850    7.13414   0.548 0.583792    
+c2           -0.76390    0.03086 -24.750  < 2e-16 ***
+c3           -0.05968    0.03085  -1.934 0.053066 .  
+c4           -0.05356    0.03086  -1.736 0.082654 .  
+c5           -0.06068    0.03085  -1.967 0.049215 *  
+c6            0.17027    0.03085   5.519 3.43e-08 ***
+b1           21.66134    5.84922   3.703 0.000213 ***
+b2           16.99306    4.90569   3.464 0.000533 ***
+b3           18.64367    5.14440   3.624 0.000290 ***
+b4           18.68640    5.03167   3.714 0.000204 ***
+b5           20.26752    5.10781   3.968 7.26e-05 ***
+b6           20.31843    5.06906   4.008 6.12e-05 ***
+s1:b1         2.59806    8.31525   0.312 0.754703    
+s1:b2         2.65683    6.97806   0.381 0.703398    
+s1:b3         2.25434    7.31598   0.308 0.757978    
+s1:b4         3.73921    7.15640   0.522 0.601325    
+s1:b5         2.49554    7.26426   0.344 0.731196    
+s1:b6         2.95904    7.20923   0.410 0.681476    
+c1:b1       -21.50630    8.21979  -2.616 0.008889 ** 
+c1:b2       -19.15657    6.88884  -2.781 0.005424 ** 
+c1:b3       -18.70118    7.22603  -2.588 0.009655 ** 
+c1:b4       -18.80419    7.06680  -2.661 0.007795 ** 
+c1:b5       -18.23300    7.17422  -2.541 0.011042 *  
+c1:b6       -18.09281    7.11979  -2.541 0.011050 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 4.816 on 48701 degrees of freedom
+Multiple R-squared:  0.8461,	Adjusted R-squared:  0.846 
+F-statistic:  8926 on 30 and 48701 DF,  p-value: < 2.2e-16
+
+
+[[2]]
+
+Call:
+lm(formula = as.formula(ff), data = data[, all_cols] %>% filter(station_id == 
+    stns_id[k], !is.na(mean_temp)))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-20.061  -2.984  -0.026   2.991  20.104 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  -48.53874   31.94355  -1.520 0.128639    
+s1            32.46551   44.40468   0.731 0.464705    
+s2            -0.25056    0.02889  -8.672  < 2e-16 ***
+s3            -0.23994    0.02889  -8.307  < 2e-16 ***
+s4             0.05927    0.02889   2.051 0.040247 *  
+s5             0.17211    0.02890   5.956 2.61e-09 ***
+s6             0.12212    0.02888   4.228 2.36e-05 ***
+c1          -123.24128   45.35775  -2.717 0.006588 ** 
+c2            -0.08447    0.02889  -2.923 0.003464 ** 
+c3             0.09516    0.02889   3.293 0.000991 ***
+c4             0.13015    0.02888   4.506 6.63e-06 ***
+c5            -0.01521    0.02888  -0.527 0.598404    
+c6             0.18517    0.02889   6.409 1.48e-10 ***
+b1            54.14755   32.39342   1.672 0.094618 .  
+b2            56.57342   31.81956   1.778 0.075419 .  
+b3            56.57925   31.98333   1.769 0.076896 .  
+b4            58.25208   31.91889   1.825 0.068007 .  
+b5            55.38935   31.96722   1.733 0.083157 .  
+b6            59.69434   31.92459   1.870 0.061510 .  
+b7            54.27214   32.01606   1.695 0.090053 .  
+s1:b1        -37.46763   45.03975  -0.832 0.405481    
+s1:b2        -38.80130   44.22835  -0.877 0.380331    
+s1:b3        -37.26740   44.46129  -0.838 0.401923    
+s1:b4        -38.39685   44.36958  -0.865 0.386831    
+s1:b5        -36.51701   44.43832  -0.822 0.411226    
+s1:b6        -37.98222   44.37774  -0.856 0.392066    
+s1:b7        -34.59717   44.50891  -0.777 0.436980    
+c1:b1        112.42744   45.99382   2.444 0.014513 *  
+c1:b2        109.12507   45.18333   2.415 0.015732 *  
+c1:b3        111.40454   45.41371   2.453 0.014167 *  
+c1:b4        110.95128   45.32305   2.448 0.014368 *  
+c1:b5        110.75273   45.39108   2.440 0.014692 *  
+c1:b6        111.67595   45.33105   2.464 0.013760 *  
+c1:b7        107.83813   45.45822   2.372 0.017684 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 4.457 on 47586 degrees of freedom
+Multiple R-squared:   0.82,	Adjusted R-squared:  0.8199 
+F-statistic:  6569 on 33 and 47586 DF,  p-value: < 2.2e-16
+
+
+[[3]]
+
+Call:
+lm(formula = as.formula(ff), data = data[, all_cols] %>% filter(station_id == 
+    stns_id[k], !is.na(mean_temp)))
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-22.4447  -2.7559  -0.0102   2.8670  16.1184 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    7.05120    0.11411  61.793  < 2e-16 ***
+s1            -4.47342    0.15999 -27.961  < 2e-16 ***
+s2            -0.10889    0.02455  -4.435 9.21e-06 ***
+s3            -0.26216    0.02454 -10.681  < 2e-16 ***
+s4             0.09030    0.02454   3.679 0.000234 ***
+s5             0.15130    0.02454   6.164 7.12e-10 ***
+s6             0.09873    0.02454   4.023 5.76e-05 ***
+c1           -11.39371    0.16255 -70.092  < 2e-16 ***
+c2             0.01534    0.02454   0.625 0.531850    
+c3             0.11100    0.02454   4.522 6.12e-06 ***
+c4             0.03022    0.02454   1.231 0.218202    
+c5            -0.12647    0.02454  -5.153 2.57e-07 ***
+c6             0.16698    0.02454   6.803 1.03e-11 ***
+b1            -0.73523    0.21166  -3.474 0.000514 ***
+b2            -0.11740    0.13601  -0.863 0.388050    
+b3             0.98551    0.16363   6.023 1.72e-09 ***
+b4             2.40715    0.14797  16.268  < 2e-16 ***
+b5             0.90662    0.22908   3.958 7.58e-05 ***
+b6             5.22038    0.35549  14.685  < 2e-16 ***
+b7           -50.87428   22.84245  -2.227 0.025939 *  
+s1:b1         -1.13982    0.29736  -3.833 0.000127 ***
+s1:b2         -1.20322    0.19193  -6.269 3.66e-10 ***
+s1:b3         -0.53270    0.23007  -2.315 0.020597 *  
+s1:b4         -0.91329    0.20847  -4.381 1.18e-05 ***
+s1:b5         -0.33136    0.32314  -1.025 0.305158    
+s1:b6          0.64647    0.50280   1.286 0.198541    
+s1:b7       -151.85370   32.42496  -4.683 2.83e-06 ***
+c1:b1         -0.46100    0.30102  -1.531 0.125660    
+c1:b2         -1.21124    0.19271  -6.285 3.29e-10 ***
+c1:b3         -0.90732    0.23252  -3.902 9.55e-05 ***
+c1:b4         -0.75684    0.20991  -3.605 0.000312 ***
+c1:b5         -1.69000    0.32443  -5.209 1.90e-07 ***
+c1:b6          1.01094    0.50146   2.016 0.043807 *  
+c1:b7        -84.83667   31.43900  -2.698 0.006968 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 4.239 on 59617 degrees of freedom
+Multiple R-squared:  0.8327,	Adjusted R-squared:  0.8326 
+F-statistic:  8994 on 33 and 59617 DF,  p-value: < 2.2e-16
+
+
+> 
+> # register the results
+> data <- data %>% mutate(mu = NA , ctemp = NA)
+> for(k in 1:p){
++   ind <- data$station_id == stns_id[k] & !is.na(data$mean_temp)
++   data[ind,] <- data[ind,] %>%  mutate(mu = lms[[k]]$fitted.values, ctemp = mean_temp - mu)
++ }
+> 
+> # remove b cols of data (for memory)
+> data <- data %>% 
++   select(!any_of(b_cols[[which.max(sapply(b_cols, length))]])) %>%
++   select(!any_of(c(s_cols, c_cols)))
+> gc()
+           used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells  2517742 134.5    4531158 242.0  4531158 242.0
+Vcells 18971500 144.8   43027336 328.3 42937954 327.6
+> 
+> # quick check (yearly)
+> data %>% group_by(year, station_name) %>%
++   summarise(m_mt = mean(mean_temp, na.rm=F), m_mu = mean(mu, na.rm=F)) %>%
++   # summarise(m_mt = mean(mean_temp, na.rm=T), m_mu = mean(mu, na.rm=T)) %>%
++   ggplot(aes(x=year, y=m_mt)) +
++   theme_bw() + theme(legend.position = "none") + ylab("(yearly) mean temperature") +
++   geom_line(aes(y=m_mu), alpha=.75, size=.5, col="red") +
++   geom_line(size=.25) + geom_point(size=.25) +
++   facet_grid(rows = "station_name", scales = "free_y")
+`summarise()` has grouped output by 'year'. You can override using the
+`.groups` argument.
+Warning messages:
+1: Removed 68 row(s) containing missing values (geom_path). 
+2: Removed 68 row(s) containing missing values (geom_path). 
+3: Removed 165 rows containing missing values (geom_point). 
+> ggsave(filename = "app/figures/series_fit_yearly.pdf", device = "pdf",
++        width = 6.5, height = 3, units = "in")
+Warning messages:
+1: Removed 68 row(s) containing missing values (geom_path). 
+2: Removed 68 row(s) containing missing values (geom_path). 
+3: Removed 165 rows containing missing values (geom_point). 
+> 
+> # quick check (monthly)
+> y0 <- 1945
+> data %>% filter(year %in% (y0 + 1:10)) %>%
++   group_by(year, month, station_name) %>%
++   summarise(m_mt = mean(mean_temp, na.rm=F),
++             m_mu = mean(mu, na.rm=F)) %>%
++   ggplot(aes(x=year+month/12, y=m_mt)) +
++   theme_bw() + theme(legend.position = "none") + ylab("(seasonal) mean temperature") +
++   geom_line(aes(y=m_mu), alpha=.75, size=.5, col="gray") + geom_point(size=.25) +
++   facet_grid(rows = "station_name", scales = "free_y")
+`summarise()` has grouped output by 'year', 'month'. You can override using the
+`.groups` argument.
+Warning message:
+Removed 2 rows containing missing values (geom_point). 
+> ggsave(filename = "app/figures/series_fit_seas.pdf", device = "pdf",
++        width = 6.5, height = 3, units = "in")
+Warning message:
+Removed 2 rows containing missing values (geom_point). 
+> 
+> # quick check (monthly)
+> y0 <- 1950:1953
+> data %>% filter(year %in% y0) %>%
++   ggplot(aes(x=date, y=mean_temp)) +
++   theme_bw() + theme(legend.position = "none") + 
++   ylab("centered temperature") + xlab("day of the year") +
++   geom_line(aes(y=mu), alpha=.75, size=.5, col="red") +
++   geom_point(size=.1) +
++   facet_grid(rows = "station_name", scales = "free_y")
+Warning message:
+Removed 1 rows containing missing values (geom_point). 
+> ggsave(filename = "app/figures/temp_daily.pdf", device = "pdf",
++        width = 6.5, height = 3, units = "in")
+Warning message:
+Removed 1 rows containing missing values (geom_point). 
+> 
+> # quick check (by yday)
+> y0 <- 1945 + 0:2
+> data %>% filter(year %in% y0) %>%
++   ggplot(aes(x=date, y=ctemp)) +
++   theme_bw() + theme(legend.position = "none") + 
++   ylab("centered temperature") + xlab("day of the year") +
++   geom_point(size=.1) +
++   facet_grid(rows = "station_name", scales = "free_y")
+Warning message:
+Removed 7 rows containing missing values (geom_point). 
+> ggsave(filename = "app/figures/ctemp_daily.pdf", device = "pdf",
++        width = 6.5, height = 3, units = "in")
+Warning message:
+Removed 7 rows containing missing values (geom_point). 
+> ggplot(data, aes(x=yday, y=ctemp)) +
++   theme_bw() + theme(legend.position = "none") + 
++   ylab("centered temperature") + xlab("day of the year") +
++   geom_point(size=.1) +
++   facet_grid(rows = "station_name", scales = "free_y")
+Warning message:
+Removed 45327 rows containing missing values (geom_point). 
+> ggsave(filename = "app/figures/ctemp_seas.pdf", device = "pdf",
++        width = 6.5, height = 3, units = "in")
+Warning message:
+Removed 45327 rows containing missing values (geom_point). 
+> 
+> 
+> 
+> # Compute pseudo-observations using ECDF ----------------------------------
+> data <- data %>% mutate(pseudo_temp = NA, diff = NA, w1 = NA, w = NA)
+> for(k in 1:p){
++   id <- stns_id[k]
++   cat("Working on ECDF for station ", id, ".\n")
++   row_id <- data$station_id == id & !is.na(data$ctemp)
++   
++   for(tt in 1:366){
++     if(tt %% 20 == 0) cat("progess: ", round(tt/366*100,2), "%\n")
++     
++     # construct weights based on yday using gaussian kernel
++     data[row_id,] <- data[row_id,] %>%
++       mutate(diff = tt - (time %% year_len)) %>%
++       mutate(diff = abs(pmin(diff, year_len - diff))) %>%
++       mutate(w1 = dnorm(diff,0,2)) %>%
++       mutate(w = w1/sum(w1, na.rm = T)) 
++     
++     # construct ecdf function using all the data
++     wecdf <- spatstat.geom::ewcdf(data[row_id,]$ctemp, data[row_id,]$w)
++     
++     # compute ecdf only for yday we care for
++     ind <- which(data[row_id,]$yday == tt & !is.na(data[row_id,]$ctemp))
++     data[row_id,][ind,] <- data[row_id,][ind,] %>%
++       mutate(pseudo_temp = wecdf(ctemp))
++     
++     # heuristic correction for the largest (pseudo_obs = 1)
++     # to avoid modifying all values (say, with pseudo_obs = pseudo_obs*n_ind/(n_ind+1))
++     n_ind <- length(ind)
++     data[row_id,][ind,] <- data[row_id,][ind,] %>%
++       mutate(pseudo_temp = ifelse(pseudo_temp == 1, 1-1/(2*n_ind), pseudo_temp))
++   }
++ }
+Working on ECDF for station  4333 .
+progess:  5.46 %
+progess:  10.93 %
+progess:  16.39 %
+progess:  21.86 %
+progess:  27.32 %
+progess:  32.79 %
+progess:  38.25 %
+progess:  43.72 %
+progess:  49.18 %
+progess:  54.64 %
+progess:  60.11 %
+progess:  65.57 %
+progess:  71.04 %
+progess:  76.5 %
+progess:  81.97 %
+progess:  87.43 %
+progess:  92.9 %
+progess:  98.36 %
+Working on ECDF for station  4712 .
+progess:  5.46 %
+progess:  10.93 %
+progess:  16.39 %
+progess:  21.86 %
+progess:  27.32 %
+progess:  32.79 %
+progess:  38.25 %
+progess:  43.72 %
+progess:  49.18 %
+progess:  54.64 %
+progess:  60.11 %
+progess:  65.57 %
+progess:  71.04 %
+progess:  76.5 %
+progess:  81.97 %
+progess:  87.43 %
+progess:  92.9 %
+progess:  98.36 %
+Working on ECDF for station  5051 .
+progess:  5.46 %
+progess:  10.93 %
+progess:  16.39 %
+progess:  21.86 %
+progess:  27.32 %
+progess:  32.79 %
+progess:  38.25 %
+progess:  43.72 %
+progess:  49.18 %
+progess:  54.64 %
+progess:  60.11 %
+progess:  65.57 %
+progess:  71.04 %
+progess:  76.5 %
+progess:  81.97 %
+progess:  87.43 %
+progess:  92.9 %
+progess:  98.36 %
+> 
+> # resulting histograms are even better than expected
+> ggplot(data, aes(x = pseudo_temp, fill=as.factor(yday))) +
++   theme_bw() + theme(legend.position = "none") + xlab("(preprocessed) temperature") +
++   geom_histogram(breaks=seq(0,1,.05), position = position_stack()) +
++   facet_wrap(~station_name)
+Warning message:
+Removed 45327 rows containing non-finite values (stat_bin). 
+> ggplot(data, aes(x = pseudo_temp)) +
++   theme_bw() + theme(legend.position = "none") + xlab("(preprocessed) temperature") +
++   scale_x_continuous(breaks = seq(0,1,.25), labels = c("0", "0.25", "0.5", "0.75", "1")) +
++   geom_histogram(breaks=seq(0,1,.05), position = position_stack()) +
++   facet_wrap(~station_name)
+Warning message:
+Removed 45327 rows containing non-finite values (stat_bin). 
+> ggsave(filename = "app/figures/pseudo_hist.pdf", device = "pdf",
++        width = 6.5, height = 2, units = "in")
+Warning message:
+Removed 45327 rows containing non-finite values (stat_bin). 
+> 
+> # note that there are equalities, but very very few of them. can disregard.
+> sapply(1:p, \(k){
++   r <- data$station_id == id & !is.na(data$ctemp)
++   tab <- table(data[r,]$pseudo_temp)
++   tab[tab > 1]
++ })
+                  [,1] [,2] [,3]
+0.194394353006717    2    2    2
+0.792622993616369    2    2    2
+0.853067801833225    2    2    2
+0.996932515337423    7    7    7
+0.996951219512195    4    4    4
+> 
+> 
+> 
+> # Save for later use ------------------------------------------------------
+> saveRDS(data, "app/data/data_pp.rds")
+> 
+> proc.time()
+   user  system elapsed 
+249.790   0.574 250.208 

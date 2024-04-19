@@ -38,7 +38,8 @@ taujack_ms <- function(X, K_serial = 0, returnC = F, flatten = T){
   
   dd <- d-1
   gs <- 2*C/(n-1) - 1
-  Zh <- sapply(0:K_serial, \(k) (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F]), simplify = "array")
+  # Zh <- sapply(0:K_serial, \(k) (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F]), simplify = "array")
+  Zh <- sapply(0:K_serial, \(k) (n-k-1)/n * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F]), simplify = "array")
   if(dd == 1) Zh <- array(Zh, c(1,1,K_serial+1))
   Zh[,,-1] <- Zh[,,-1] + aperm(Zh[,,-1], c(2,1,3))
   Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
@@ -64,7 +65,8 @@ taujack_dac <- function(X, thresh = 25L, brute_force = F, K_serial = 0, returnC 
 
   gs <- t((2^(1:dd)*t(C)/(n-1) - 1)/(2^(1:dd) - 1))
   Zh <- sapply(0:K_serial, \(k){
-    (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+    # (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+    (n-k-1)/n * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
   }, simplify = "array")
   if(dd == 1) Zh <- array(Zh, c(1,1,K_serial+1))
   
@@ -82,39 +84,107 @@ taujack_dac <- function(X, thresh = 25L, brute_force = F, K_serial = 0, returnC 
 }
 
 
-taujack_dacc <- function(X, thresh = 25L, brute_force = F, K_serial = 0, returnC = F){
-  
-  if(brute_force){
-    C <- bruteForce(X, seq = T)
-  }else{
-    # X <- apply(X, 2, rank)
-    C <- dac_seqq(X, thresh = thresh, brute_force = F)
-  }
-  
-  if(returnC) return(C)
-  
-  n <- nrow(X)
-  d <- ncol(X)
-  dd <- d-1
-  
-  gs <- t((2^(1:dd)*t(C)/(n-1) - 1)/(2^(1:dd) - 1))
-  Zh <- sapply(0:K_serial, \(k){
-    (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
-  }, simplify = "array")
-  if(dd == 1) Zh <- array(Zh, c(1,1,K_serial+1))
-  
-  if(K_serial == 0){
-    return(list(Th = colMeans(gs),
-                Sh = 4*Zh[,,1]))
-  }
-  
-  Zh[,,-1] <- Zh[,,-1] + aperm(Zh[,,-1], c(2,1,3))
-  Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
-  
-  return(list(Th = colMeans(gs),
-              Sh = 4*(Zh[,,1] + Zsum),
-              Zh = Zh))
-}
+# taujack_dacc <- function(X, thresh = 25L, brute_force = F, K_serial = 0, returnC = F){
+#   
+#   if(brute_force){
+#     C <- bruteForce(X, seq = T)
+#   }else{
+#     # X <- apply(X, 2, rank)
+#     C <- dac_seqq(X, thresh = thresh, brute_force = F)
+#   }
+#   
+#   if(returnC) return(C)
+#   
+#   n <- nrow(X)
+#   d <- ncol(X)
+#   dd <- d-1
+#   
+#   gs <- t((2^(1:dd)*t(C)/(n-1) - 1)/(2^(1:dd) - 1))
+#   Zh <- sapply(0:K_serial, \(k){
+#     # (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+#     (n-k-1)/n * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+#   }, simplify = "array")
+#   if(dd == 1) Zh <- array(Zh, c(1,1,K_serial+1))
+#   
+#   if(K_serial == 0){
+#     return(list(Th = colMeans(gs),
+#                 Sh = 4*Zh[,,1]))
+#   }
+#   
+#   Zh[,,-1] <- Zh[,,-1] + aperm(Zh[,,-1], c(2,1,3))
+#   Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
+#   
+#   return(list(Th = colMeans(gs),
+#               Sh = 4*(Zh[,,1] + Zsum),
+#               Zh = Zh))
+# }
+
+
+# taujack_dac_parallel <- function(X, thresh = 25L, brute_force = F, K_serial = 0, returnC = F, mc_cores = 2){
+# 
+#   n <- nrow(X)
+#   d <- ncol(X)
+#   dd <- d-1
+#   
+#   if(brute_force){
+#     C <- bruteForce(X, seq = T)
+#   }else if(mc_cores == 1){
+#       C <- dac_seq(X, thresh = thresh, brute_force = F)
+#   }else{
+#     l <- mc_cores
+#     nn <- round(seq(1,n,length.out=l+1))
+#     nn <- matrix(c(nn[1], sapply(nn[-c(1,l+1)], \(x) c(x,x+1)), nn[l+1]),
+#                  mc_cores, 2, byrow = T)
+#     
+#     clus <- parallel::makeCluster(l)
+#     parallel::clusterExport(clus, list("seq"), envir = environment())
+#     parallel::clusterEvalQ(clus, {
+#       library(taujackmin)
+#     })
+#     
+#     C <- parallel::parLapply(cl = clus,
+#                              X = apply(nn, 1, \(x) X[seq(x[1],x[2]),], simplify = F),
+#                              fun = \(X_sub) dac_seq(X_sub, thresh = thresh, brute_force = F)) |>
+#       do.call(what = "rbind")
+#     
+#     ijs <- combn(l,2)
+#     Cs <- parallel::parLapply(cl = clus,
+#                               X = apply(ijs, 2, \(x) list(X[seq(nn[x[1],1], nn[x[1],2]),],
+#                                                           X[seq(nn[x[2],1], nn[x[2],2]),]), simplify = F),
+#                               fun = \(X_sub) dac_seq(X_sub[[1]], X_sub[[2]], thresh = thresh, brute_force = F))
+#     
+#     for(r in 1:ncol(ijs)){
+#       x <- ijs[,r]
+#       i1 <- nn[x[1],1]; i2 <- nn[x[1],2]; n1 <- i2 - i1 + 1
+#       j1 <- nn[x[2],1]; j2 <- nn[x[2],2]; n2 <- j2 - j1 + 1
+#       C[seq(i1, i2),] <- C[seq(i1, i2),] + Cs[[r]][seq(1, n1),]
+#       C[seq(j1, j2),] <- C[seq(j1, j2),] + Cs[[r]][n1 + seq(1, n2),]
+#     }
+#     
+#     stopCluster(clus)
+#   }
+#   
+#   if(returnC) return(C)
+#   
+#   gs <- t((2^(1:dd)*t(C)/(n-1) - 1)/(2^(1:dd) - 1))
+#   Zh <- sapply(0:K_serial, \(k){
+#     # (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+#     (n-k-1)/n * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+#   }, simplify = "array")
+#   if(dd == 1) Zh <- array(Zh, c(1,1,K_serial+1))
+#   
+#   if(K_serial == 0){
+#     return(list(Th = colMeans(gs),
+#                 Sh = 4*Zh[,,1]))
+#   }
+#   
+#   Zh[,,-1] <- Zh[,,-1] + aperm(Zh[,,-1], c(2,1,3))
+#   Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
+#   
+#   return(list(Th = colMeans(gs),
+#               Sh = 4*(Zh[,,1] + Zsum),
+#               Zh = Zh))
+# }
 
 
 # brute force algorithm
@@ -125,13 +195,19 @@ taujack_bf <- function(X, seq = F, K_serial = 0, returnC = F){
   
   n <- nrow(X)
   d <- ncol(X)
-  dd <- d-1
+  if(seq){
+    dd <- 1:(d-1)
+  }else{
+    dd <- d-1
+  }
+  
 
-  gs <- t((2^(1:dd)*t(C)/(n-1) - 1)/(2^(1:dd) - 1))
+  gs <- t((2^dd*t(C)/(n-1) - 1)/(2^dd - 1))
   Zh <- sapply(0:K_serial, \(k){
-    (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+    # (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+    (n-k-1)/n * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
   }, simplify = "array")
-  if(dd == 1) Zh <- array(Zh, c(1,1,K_serial+1))
+  if(length(dd) == 1) Zh <- array(Zh, c(1,1,K_serial+1))
   
   if(K_serial == 0){
     return(list(Th = colMeans(gs),
@@ -147,6 +223,68 @@ taujack_bf <- function(X, seq = F, K_serial = 0, returnC = F){
 }
 
 
+taujack_bf_parallel <- function(X, seq = F, K_serial = 0, returnC = F, mc_cores = 2){
+  n <- nrow(X)
+  d <- ncol(X)
+  dd <- d-1
+  
+  if(mc_cores == 1){
+    C <- bruteForce(X, seq = seq)
+  }else{
+    l <- mc_cores
+    nn <- round(seq(1,n,length.out=l+1))
+    nn <- matrix(c(nn[1], sapply(nn[-c(1,l+1)], \(x) c(x,x+1)), nn[l+1]),
+                 mc_cores, 2, byrow = T)
+    
+    clus <- parallel::makeCluster(l)
+    parallel::clusterExport(clus, list("seq"), envir = environment())
+    parallel::clusterEvalQ(clus, {
+      library(taujackmin)
+    })
+    
+    C <- parallel::parLapply(cl = clus,
+                             X = apply(nn, 1, \(x) X[seq(x[1],x[2]),], simplify = F),
+                             fun = \(X_sub) bruteForce(X_sub, seq)) |>
+      do.call(what = "rbind")
+    
+    ijs <- combn(l,2)
+    Cs <- parallel::parLapply(cl = clus,
+                              X = apply(ijs, 2, \(x) list(X[seq(nn[x[1],1], nn[x[1],2]),],
+                                                          X[seq(nn[x[2],1], nn[x[2],2]),]), simplify = F),
+                              fun = \(X_sub) bruteForce2(X_sub[[1]], X_sub[[2]], seq))
+    
+    for(r in 1:ncol(ijs)){
+      x <- ijs[,r]
+      i1 <- nn[x[1],1]; i2 <- nn[x[1],2]; n1 <- i2 - i1 + 1
+      j1 <- nn[x[2],1]; j2 <- nn[x[2],2]; n2 <- j2 - j1 + 1
+      C[seq(i1, i2),] <- C[seq(i1, i2),] + Cs[[r]][seq(1, n1),]
+      C[seq(j1, j2),] <- C[seq(j1, j2),] + Cs[[r]][n1 + seq(1, n2),]
+    }
+    
+    stopCluster(clus)
+  }
+  
+  if(returnC) return(C)
+  
+  gs <- t((2^(1:dd)*t(C)/(n-1) - 1)/(2^(1:dd) - 1))
+  Zh <- sapply(0:K_serial, \(k){
+    # (n-k-1)/(n-k) * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+    (n-k-1)/n * cov(gs[1:(n-k),,drop=F], gs[(k+1):n,,drop=F])
+  }, simplify = "array")
+  if(dd == 1) Zh <- array(Zh, c(1,1,K_serial+1))
+  
+  if(K_serial == 0){
+    return(list(Th = colMeans(gs),
+                Sh = 4*Zh[,,1]))
+  }
+  
+  Zh[,,-1] <- Zh[,,-1] + aperm(Zh[,,-1], c(2,1,3))
+  Zsum <- apply(Zh[,,-1], c(1,2), sum, na.rm=T)
+  
+  return(list(Th = colMeans(gs),
+              Sh = 4*(Zh[,,1] + Zsum),
+              Zh = Zh))
+}
 
 
 

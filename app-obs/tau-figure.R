@@ -6,7 +6,7 @@ labs <- paste0("k=", 1:L_max + 1)
 names(labs) <- 1:L_max + 1
 
 # for 99% confidence int.
-a <- abs(qnorm(.005,0,1))
+a <- abs(qnorm(.01,0,1))
 
 gg <- data.frame(city = rep(stns_name, each=L),
                  k = rep(1:L + 1, times=q), p = p,

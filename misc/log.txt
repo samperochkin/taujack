@@ -1,0 +1,83 @@
+
+R version 4.3.2 (2023-10-31) -- "Eye Holes"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> library(parallel)
+> library(Rcpp)
+> sourceCpp("../src/bf.cpp")   # brute force alg.
+using C++ compiler: ‘g++ (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0’
+> 
+> print("Started from the bottom. Now we here.")
+[1] "Started from the bottom. Now we here."
+> 
+> seq <- T
+> n <- 50
+> X <- replicate(5, sample(n))
+> mc_cores <- 5
+> 
+> nn <- round(seq(1,n,length.out=mc_cores+1))
+> nn <- matrix(c(nn[1], sapply(nn[-c(1,mc_cores+1)], \(x) c(x,x+1)), nn[mc_cores+1]),
++              mc_cores, 2, byrow = T)
+> 
+> clus <- parallel::makeCluster(mc_cores)
+> # parallel::clusterExport(clus, list(seq, bruteForce), envir = environment())
+> 
+> 
+> print(bruteForce)
+function (X, seq = FALSE, all = FALSE) 
+.Call(<pointer: 0x7fa38c63e5e0>, X, seq, all)
+> parallel::clusterExport(clus, list("seq", "bruteForce"), envir = environment())
+> 
+> print(bruteForce)
+function (X, seq = FALSE, all = FALSE) 
+.Call(<pointer: 0x7fa38c63e5e0>, X, seq, all)
+> Sys.sleep(2)
+> 
+> parallel::parLapply(cl = clus,
++                     X = apply(nn, 1, \(x) X[seq(x[1],x[2]),], simplify = F),
++                     fun = \(X_sub){
++                       bruteForce
++                     })
+[[1]]
+function (X, seq = FALSE, all = FALSE) 
+.Call(<pointer: (nil)>, X, seq, all)
+
+[[2]]
+function (X, seq = FALSE, all = FALSE) 
+.Call(<pointer: (nil)>, X, seq, all)
+
+[[3]]
+function (X, seq = FALSE, all = FALSE) 
+.Call(<pointer: (nil)>, X, seq, all)
+
+[[4]]
+function (X, seq = FALSE, all = FALSE) 
+.Call(<pointer: (nil)>, X, seq, all)
+
+[[5]]
+function (X, seq = FALSE, all = FALSE) 
+.Call(<pointer: (nil)>, X, seq, all)
+
+> 
+> stopCluster(clus)
+> 
+> proc.time()
+   user  system elapsed 
+  5.939   0.380   8.575 
