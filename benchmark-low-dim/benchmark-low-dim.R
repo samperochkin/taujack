@@ -1,6 +1,6 @@
 # File used to perform the benchmarking the algorithms.
 # ran with
-# R --vanilla --no restore CMD BATCH benchmark/benchmark.R benchmark/log.txt
+# R --vanilla --no restore CMD BATCH benchmark-low-dim/benchmark-low-dim.R benchmark-low-dim/log.txt
 
 # Packages ----------------------------------------------------------------
 library(Rcpp)
@@ -20,7 +20,7 @@ source("functions.R")       # wrappers (performs re-ordering if necessary)
 # Benchmark ---------------------------------------------------------------
 num_rep <- 5
 taus <- c(1)
-ks <- 7:25 # (n = 2^k)
+ks <- 7:28 # (n = 2^k)
 ps <- c(2,4) # dimensions considered
 
 sim_grid <- expand.grid(rep_id = 1:num_rep, tau = taus, k = ks)
@@ -69,7 +69,7 @@ for(x in seq_along(ks)){
                      time = c(time_knight_o, time_knight_e, time_dac))
     
     return(dt)
-  }, mc.cores = 12) |> rbindlist()
+  }, mc.cores = 15) |> rbindlist()
   
   fwrite(times, paste0("benchmark-low-dim/times", x, ".csv"))
 }
