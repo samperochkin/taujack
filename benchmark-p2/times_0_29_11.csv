@@ -1,0 +1,6 @@
+rep_id,n,tau,rho,p,fun,time
+1,131072,0,0,2,divide-and-conquer (DAC),0.364082081
+2,131072,0,0,2,divide-and-conquer (DAC),0.363610732
+3,131072,0,0,2,divide-and-conquer (DAC),0.361406122
+4,131072,0,0,2,divide-and-conquer (DAC),0.364777163
+5,131072,0,0,2,divide-and-conquer (DAC),0.35843897
