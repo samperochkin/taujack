@@ -9,7 +9,7 @@ library(data.table)
 # load results and format -------------------------------------------------
 pat <- "times[1-9]"
 
-times <- list.files("benchmark-p4", pattern = pat, full.names = TRUE) |> lapply(fread) |> rbindlist()
+times <- list.files("benchmark-p4-0", pattern = pat, full.names = TRUE) |> lapply(fread) |> rbindlist()
 times <- times[order(n)]
 times0 <- times[, .(mean_time = mean(time), min_time = min(time), max_time = max(time), N = .N),
                 .(n,tau,p,fun)]
