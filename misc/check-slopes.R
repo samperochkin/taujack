@@ -1,5 +1,3 @@
-# Script that generates the plots for the benchmark analysis
-
 # packages ----------------------------------------------------------------
 library(ggplot2)
 library(data.table)
@@ -26,17 +24,14 @@ times0[grepl("KE", fun), fun := "KE"]
 times0[grepl("DAC", fun), fun := "DAC"]
 
 
-times0[fun == "BF" & n %in% 2^(14:16) & type == "median runtime", .(n, p, time, tau)] |>
-  dcast(n+tau~p, value.var = "time")
 
+# tau0 <- .5
+tau0 <- .75
+# times0[order(fun, p, n)][type == "median runtime" & tau == tau0 & fun == "DAC", 
+#                          median(log(time,2)), .(fun, p, n)]
+tt <- times0[order(fun, p, n)][type == "median runtime" & tau == tau0 & fun == "DAC", 
+                         median(log(time,2)), .(p, n)] |> dcast(n~p)
+tt <- cbind(tt$n[-1], log(tt$n,2)[-1], apply(tt[,-1], 2, diff))
+tt
 
-times0[order(fun, p, n)][type == "median runtime" & tau == .5 & fun == "DAC", 
-                         median(log(time,2)), .(fun, p, n)]
-
-tt <- times0[order(fun, p, n)][type == "median runtime" & tau == .25 & fun == "DAC", 
-                         median(log(time,2)), .(p, n)] |>
-  dcast(n~p)
-
-apply(tt, 2, diff)
-
-t(apply(apply(tt, 2, diff)[,2:5],1,diff))
+t(apply(tt[,-(1:2)], 1, diff))

@@ -63,7 +63,7 @@ times0[fun %in% c("KO", "KE") & type == "median runtime" & tau == 0][
 
 # plots -------------------------------------------------------------------
 
-# for main document
+# for appendix
 gg <- ggplot(times0[p %in% c(2,4,6,10) & type != "mean runtime"],
              aes(x = log(n,2), y = log(time,2), linetype=as.factor(p), col=as.factor(fun))) +
   theme_bw() +
@@ -82,7 +82,7 @@ gg <- ggplot(times0[p %in% c(2,4,6,10) & type != "mean runtime"],
   scale_x_continuous(breaks = seq(6,20,2)) +
   scale_y_continuous(breaks = seq(-14,6,4)) +
   xlab(expression(log[2]~n)) +
-  ylab(expression(log[2](average~runtime))) +
+  ylab(expression(log[2](runtime))) +
   labs(col="algorithm") +
   scale_linetype_manual(name = "dimension (p)", values = c(1,2,3,4)) +
   geom_line(size=.5) +
@@ -94,7 +94,7 @@ print(gg)
 dev.off()
 
 
-# for appendix
+# for main document
 gg <- ggplot(times0[p %in% c(2,4,6,10) & type == "median runtime" & tau %in% c(0,.5,1)],
              aes(x = log(n,2), y = log(time,2), linetype=as.factor(p), col=as.factor(fun))) +
   theme_bw() +
@@ -114,7 +114,7 @@ gg <- ggplot(times0[p %in% c(2,4,6,10) & type == "median runtime" & tau %in% c(0
         strip.text.x = element_text(size = 10)) +
   guides(col = guide_legend(ncol=2), linetype = guide_legend(ncol=2)) +
   scale_x_continuous(breaks = seq(6,20,2)) +
-  scale_y_continuous(breaks = seq(-14,6,4)) +
+  scale_y_continuous(breaks = seq(-14,6,2)) +
   xlab(expression(log[2]~n)) +
   ylab(expression(log[2](median~runtime))) +
   labs(col="algorithm") +
