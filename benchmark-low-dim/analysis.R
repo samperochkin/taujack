@@ -7,7 +7,10 @@ library(data.table)
 
 
 # load results and format -------------------------------------------------
-times <- list.files("benchmark-low-dim/", pattern = "times[1-9]", full.names = TRUE) |> lapply(fread) |> rbindlist()
+pat <- "times[1-9]"
+pat <- "times_local_[1-9]"
+
+times <- list.files("benchmark-low-dim/", pattern = pat, full.names = TRUE) |> lapply(fread) |> rbindlist()
 times0 <- times[, .(mean_time = mean(time), min_time = min(time), max_time = max(time), N = .N),
                 .(n,tau,p,fun)]
 
@@ -37,10 +40,16 @@ fun0 <- "DAC"
 p0 <- 2
 times00 <- times0[order(fun, n)][tau == tau0 & type == type0 & p==p0 & fun == fun0]
 diff(times00$ltime)
+plot(diff(times00$time)/diff(times00$n))
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> df059e8d500408e68262e8dd4989a595dcff5cc8
 p0 <- 4
 times00 <- times0[order(fun, n)][tau == tau0 & type == type0 & p==p0 & fun == fun0]
 diff(times00$ltime)
+plot(diff(times00$time)/diff(times00$n))
 
 
 gg <- ggplot(times0[p %in% c(2,4) & type == "median runtime" & tau %in% c(0,.5,1)],
@@ -82,6 +91,7 @@ fun0 <- "KO"
 p0 <- 2
 times00 <- times0[order(fun, n)][tau == tau0 & type == type0 & p==p0 & fun == fun0]
 diff(times00$ltime)
+plot(diff(times00$time)/diff(times00$n))
 
 fun0 <- "KE"
 p0 <- 2

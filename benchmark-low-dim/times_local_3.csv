@@ -1,0 +1,16 @@
+rep_id,n,tau,rho,p,fun,time
+1,512,1,1,2,"Knight (original, KO)",0.000692218
+1,512,1,1,2,"Knight (extended, KE)",0.001253133
+1,512,1,1,2,divide-and-conquer (DAC),0.001225088
+2,512,1,1,2,"Knight (original, KO)",0.000663611
+2,512,1,1,2,"Knight (extended, KE)",0.001216989
+2,512,1,1,2,divide-and-conquer (DAC),0.001141316
+3,512,1,1,2,"Knight (original, KO)",0.000516159
+3,512,1,1,2,"Knight (extended, KE)",0.001305514
+3,512,1,1,2,divide-and-conquer (DAC),0.001124437
+4,512,1,1,2,"Knight (original, KO)",0.000372999
+4,512,1,1,2,"Knight (extended, KE)",0.000951852
+4,512,1,1,2,divide-and-conquer (DAC),0.00074013
+5,512,1,1,2,"Knight (original, KO)",0.000188007
+5,512,1,1,2,"Knight (extended, KE)",0.000749163
+5,512,1,1,2,divide-and-conquer (DAC),0.000805694

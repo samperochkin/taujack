@@ -1,5 +1,3 @@
-# Script that generates the plots for the benchmark analysis
-
 # packages ----------------------------------------------------------------
 library(ggplot2)
 library(data.table)
