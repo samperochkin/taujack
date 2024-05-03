@@ -122,3 +122,8 @@ Number of row in sim_grid:  19
 .
 ------------------------- s= 19 
 .
+Null data.table (0 rows and 0 cols)
+> 
+> proc.time()
+     user    system   elapsed 
+59753.918    20.332 87797.831 

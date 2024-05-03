@@ -59,14 +59,18 @@ gg <- ggplot(times0[type == "median runtime"],
   scale_y_continuous(breaks = seq(-14,22,4)) +
   xlab(expression(log[2]~n)) +
   ylab(expression(log[2](median~runtime))) +
-  viridis::scale_color_viridis(name = "slope") +
+  viridis::scale_color_viridis(name = "slope", breaks = c(.2,.6,1,1.4)) +
+  # viridis::scale_color_viridis(option = "H", name = "slope", breaks = c(.2,.6,1,1.4)) +
   geom_line(size=.75) +
   geom_point(size=1.25) +
   facet_wrap(~p+tau, labeller = label_bquote(rows = "t = "*.(tau)*",  p = "*.(p)))
 gg
 
+times0[n == 2^26 & p == 2 & type == "median runtime"]
+times0[n == 2^24 & p == 4 & tau == 0 & type == "median runtime"]
+times0[n == 2^24 & p == 4 & tau == .5 & type == "median runtime"]
 
-pdf("figures/extra.pdf", height = 6.5/3, width = 6.5)
+pdf("figures/extra.pdf", height = 6.5/2.5, width = 6.5)
 print(gg)
 dev.off()
 
