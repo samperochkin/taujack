@@ -1,0 +1,9 @@
+rep_id,n,tau,rho,p,fun,time
+2,268435456,1,1,2,"Knight (original, KO)",46.055734779
+2,268435456,1,1,2,"Knight (extended, KE)",105.393538433
+2,268435456,1,1,2,divide-and-conquer (DAC),1361.164849517
+2,268435456,1,1,4,divide-and-conquer (DAC),2767.216649725
+4,268435456,1,1,2,"Knight (original, KO)",46.322682112
+4,268435456,1,1,2,"Knight (extended, KE)",104.898589892
+4,268435456,1,1,2,divide-and-conquer (DAC),1361.815594999
+4,268435456,1,1,4,divide-and-conquer (DAC),2767.179077107

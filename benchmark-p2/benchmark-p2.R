@@ -20,7 +20,7 @@ source("functions.R")       # wrappers (performs re-ordering if necessary)
 # Benchmark ---------------------------------------------------------------
 num_rep <- 5
 taus <- 0
-ks <- 25 # (n = 2^k)
+ks <- 7:27 # (n = 2^k)
 p <- c(2) # dimensions considered
 
 sim_grid <- expand.grid(rep_id = 1:num_rep, tau = taus, k = ks)
@@ -58,5 +58,5 @@ for(x in seq_along(ks)){
     return(dt)
   }, mc.cores = 15) |> rbindlist()
   
-  fwrite(times, paste0("benchmark-p2/times_0_29_", 20+x, ".csv"))
+  fwrite(times, paste0("benchmark-p2/times_0_29_", x, ".csv"))
 }
