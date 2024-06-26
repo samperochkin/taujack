@@ -14,5 +14,5 @@ library(Rcpp)
 sourceCpp("src/ms.cpp")       # for Knight's extended alg.
 sourceCpp("src/dac_seq.cpp")  # divide-and-conquer alg.
 sourceCpp("src/bf.cpp")       # brute force alg.
-source("functions.R")         # wrappers (performs re-ordering if necessary)
+source("functions.R")         # wrappers
 ```
