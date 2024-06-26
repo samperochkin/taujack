@@ -20,7 +20,7 @@ n <- 1e4
 d <- 4
 X <- matrix(rnorm(n*d), n, d)
 
-taujack_ms(X)
+taujack_ms(X, flatten = F)
 taujack_dac(X, thresh=10L)
 taujack_bf(X, seq = T)
 ```
